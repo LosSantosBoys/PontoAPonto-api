@@ -1,3 +1,5 @@
+using PontoAPonto.Service.Extensions;
+
 namespace PontoAPonto.Api
 {
     public class Program
@@ -13,6 +15,10 @@ namespace PontoAPonto.Api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            // Add services
+            var configuration = builder.Configuration;
+            builder.Services.AddServices(configuration);
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -25,7 +31,6 @@ namespace PontoAPonto.Api
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 
