@@ -11,8 +11,8 @@ using PontoAPonto.Data.Contexts;
 namespace PontoAPonto.Data.Migrations
 {
     [DbContext(typeof(UserContext))]
-    [Migration("20240423223444_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240424030553_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,11 +28,10 @@ namespace PontoAPonto.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<DateTime>("Birthday")
+                    b.Property<DateTime?>("Birthday")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Cpf")
-                        .IsRequired()
                         .HasMaxLength(11)
                         .HasColumnType("varchar(11)");
 
@@ -50,11 +49,9 @@ namespace PontoAPonto.Data.Migrations
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("PasswordHash")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("PasswordSalt")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Phone")
@@ -64,12 +61,22 @@ namespace PontoAPonto.Data.Migrations
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Cpf")
+                        .IsUnique();
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("Phone")
+                        .IsUnique();
 
                     b.ToTable("Users", (string)null);
                 });

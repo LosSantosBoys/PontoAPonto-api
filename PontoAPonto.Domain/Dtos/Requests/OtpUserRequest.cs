@@ -1,4 +1,5 @@
 ﻿using PontoAPonto.Domain.Models.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace PontoAPonto.Domain.Dtos.Requests
 {
@@ -11,8 +12,13 @@ namespace PontoAPonto.Domain.Dtos.Requests
             Phone = phone;
         }
 
+        [Required]
         public string Name { get; set; }
+
+        [Required]
         public string Email { get; set; }
+
+        [Required]
         public string Phone {  get; set; }
 
         public User ToEntity()

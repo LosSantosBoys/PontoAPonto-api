@@ -7,7 +7,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PontoAPonto.Infra.Configs;
 using PontoAPonto.Data.Contexts;
-using Microsoft.EntityFrameworkCore;
 
 namespace PontoAPonto.Service.Extensions
 {
@@ -17,13 +16,14 @@ namespace PontoAPonto.Service.Extensions
         {
             //Infra
             services.AddSingleton<IConnStringProvider, ConnStringProvider>();
+            services.AddSingleton<IEmailService, EmailService>();
 
             //Repositories
-            services.AddSingleton<IUserRepository, UserRepository>();
             services.AddDbContext<UserContext>();
+            services.AddTransient<IUserRepository, UserRepository>();
 
             //Services
-            services.AddSingleton<IUserService, UserService>();
+            services.AddTransient<IUserService, UserService>();
 
             return services;
         }

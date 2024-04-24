@@ -31,16 +31,14 @@ namespace PontoAPonto.Data.Contexts
                     .IsRequired()
                     .HasMaxLength(255);
 
-                entity.Property(u => u.Email)
-                    .IsRequired()
-                    .HasMaxLength(255);
+                entity.HasIndex(u => u.Email)
+                    .IsUnique();
 
-                entity.Property(u => u.Phone)
-                    .IsRequired()
-                    .HasMaxLength(13);
+                entity.HasIndex(u => u.Phone)
+                    .IsUnique();
 
-                entity.Property(u => u.Cpf)
-                    .HasMaxLength(11);
+                entity.HasIndex(u => u.Cpf)
+                    .IsUnique();
 
                 entity.OwnsOne(u => u.Otp,
                     optBuilder =>
