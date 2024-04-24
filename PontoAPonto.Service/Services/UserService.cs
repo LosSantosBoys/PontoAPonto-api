@@ -21,12 +21,14 @@ namespace PontoAPonto.Service.Services
 
         public async Task<BaseResponse<OtpUserResponse>> CreateUserOtpAsync(OtpUserRequest request)
         {
+            //TODO: Proper error messages + check for duplicity in email and phone
             var user = request.ToEntity();
-            var response = await _userRepository.CreateUserOtpAsync(user);
+            var response = new BaseResponse<OtpUserResponse>();
+            var success = await _userRepository.CreateUserOtpAsync(user);
 
-            if (!response.Success)
-                return response;
-
+            if (!success)
+                response.CreateError(HttpStatusCode.BadRequest, ResponseMessages.ErrorCreatingUserOtp);
+                
             var body = new StringBuilder().AppendFormat(Email.BodyOtp, user.Otp.Password).ToString();
 
             await _emailService.SendEmailAsync(user.Email, Email.SubjectOtp, body);

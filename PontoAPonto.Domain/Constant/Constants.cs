@@ -11,7 +11,7 @@
         public struct ResponseMessages
         {
             public const string UserOtpCreated = "User and OTP code created";
-            public const string ErrorCreatingUserOtp = "Failed to create user. Error message: {0}";
+            public const string ErrorCreatingUserOtp = "Failed to create user.";
         }
 
         public struct Email
