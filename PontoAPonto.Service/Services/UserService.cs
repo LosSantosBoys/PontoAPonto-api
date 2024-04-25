@@ -1,4 +1,5 @@
-﻿using PontoAPonto.Domain.Dtos.Requests;
+﻿using AutoMapper;
+using PontoAPonto.Domain.Dtos.Requests;
 using PontoAPonto.Domain.Dtos.Responses;
 using PontoAPonto.Domain.Interfaces.Repositories;
 using PontoAPonto.Domain.Interfaces.Services;
@@ -12,11 +13,13 @@ namespace PontoAPonto.Service.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly IEmailService _emailService;
+        private readonly IMapper _mapper;
 
-        public UserService(IUserRepository userRepository, IEmailService emailService)
+        public UserService(IUserRepository userRepository, IEmailService emailService, IMapper mapper)
         {
             _userRepository = userRepository;
             _emailService = emailService;
+            _mapper = mapper;
         }
 
         public async Task<BaseResponse<OtpUserResponse>> CreateUserOtpAsync(OtpUserRequest request)
@@ -24,15 +27,47 @@ namespace PontoAPonto.Service.Services
             //TODO: Proper error messages + check for duplicity in email and phone
             var user = request.ToEntity();
             var response = new BaseResponse<OtpUserResponse>();
-            var success = await _userRepository.CreateUserOtpAsync(user);
+            var success = await _userRepository.AddUserAsync(user);
 
             if (!success)
                 response.CreateError(HttpStatusCode.BadRequest, ResponseMessages.ErrorCreatingUserOtp);
-                
-            var body = new StringBuilder().AppendFormat(Email.BodyOtp, user.Otp.Password).ToString();
 
-            await _emailService.SendEmailAsync(user.Email, Email.SubjectOtp, body);
+            await SendOtpEmailAsync(user.Email, user.Otp.Password);
             return response.CreateSuccess(HttpStatusCode.Created, ResponseMessages.UserOtpCreated, new OtpUserResponse { OtpCode = user.Otp.Password });
+        }
+
+        public async Task<bool> ValidateOtpAsync(ValidateOtpRequest request)
+        {
+            //TODO: Error messages for expiracy, invalid code, db error, etc
+            var user = await _userRepository.GetUserByEmailAsync(request.Email);
+
+            var isValid = user.ValidateOtp(request.Otp);
+
+            await _userRepository.UpdateUserAsync(user);
+
+            return isValid;
+        }
+
+        public async Task<bool> GenerateNewOtpAsync(string email)
+        {
+            //TODO: Error messages
+            var user = await _userRepository.GetUserByEmailAsync(email);
+
+            var success = user.GenerateNewOtp();
+
+            await _userRepository.UpdateUserAsync(user);
+
+            if(success)
+                await SendOtpEmailAsync(user.Email, user.Otp.Password);
+
+            return success;
+        }
+
+        private async Task SendOtpEmailAsync(string email, int otpCode)
+        {
+            var body = new StringBuilder().AppendFormat(Email.BodyOtp, otpCode).ToString();
+
+            await _emailService.SendEmailAsync(email, Email.SubjectOtp, body);
         }
     }
 }

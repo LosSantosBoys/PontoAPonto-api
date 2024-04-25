@@ -57,11 +57,12 @@ namespace PontoAPonto.Tests.Models
             var initialExpiry = otp.Expiracy;
 
             // Act
-            otp.GenerateNewOtp();
+            var response = otp.GenerateNewOtp();
 
             // Assert
             Assert.NotEqual(initialPassword, otp.Password);
             Assert.NotEqual(initialExpiry, otp.Expiracy);
+            Assert.True(response);
             Assert.False(otp.IsVerified);
         }
     }

@@ -36,7 +36,23 @@ namespace PontoAPonto.Domain.Models.Entities
             };
         }
 
-        public void VerifyUser(string passwordHash, string passwordSalt, string cpf, DateTime birthday)
+        public bool ValidateOtp(int otpCode)
+        {
+            var success = Otp.SendOtp(otpCode);
+            UpdatedAt = DateTime.Now;
+
+            return success;
+        }
+
+        public bool GenerateNewOtp()
+        {
+            var success = Otp.GenerateNewOtp();
+            UpdatedAt = DateTime.Now;
+
+            return success;
+        }
+
+        public void UpdateVerifiedUser(string passwordHash, string passwordSalt, string cpf, DateTime birthday)
         {
             PasswordHash = passwordHash;
             PasswordSalt = passwordSalt;

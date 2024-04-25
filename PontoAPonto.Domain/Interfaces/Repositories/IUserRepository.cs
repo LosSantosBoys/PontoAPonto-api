@@ -4,6 +4,8 @@ namespace PontoAPonto.Domain.Interfaces.Repositories
 {
     public interface IUserRepository
     {
-        Task<bool> CreateUserOtpAsync(User user);
+        Task<bool> AddUserAsync(User user);
+        Task<User> GetUserByEmailAsync(string email);
+        Task<bool> UpdateUserAsync(User user);
     }
 }

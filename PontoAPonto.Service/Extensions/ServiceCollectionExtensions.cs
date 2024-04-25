@@ -17,6 +17,7 @@ namespace PontoAPonto.Service.Extensions
             //Infra
             services.AddSingleton<IConnStringProvider, ConnStringProvider>();
             services.AddSingleton<IEmailService, EmailService>();
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             //Repositories
             services.AddDbContext<UserContext>();

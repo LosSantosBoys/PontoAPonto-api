@@ -2,6 +2,7 @@
 using PontoAPonto.Domain.Dtos.Requests;
 using PontoAPonto.Domain.Dtos.Responses;
 using PontoAPonto.Domain.Interfaces.Services;
+using System.ComponentModel.DataAnnotations;
 
 namespace PontoAPonto.Api.Controllers
 {
@@ -15,7 +16,7 @@ namespace PontoAPonto.Api.Controllers
             _userService = userService;
         }
 
-        [HttpPost]
+        [HttpPost("/signup")]
         [ProducesResponseType(typeof(BaseResponse<OtpUserResponse>), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateUserOtp(OtpUserRequest request)
@@ -29,7 +30,9 @@ namespace PontoAPonto.Api.Controllers
             return StatusCode((int)response.StatusCode, response.Message);        
         }
 
-        [HttpPatch]
+        [HttpPatch("/validate-otp")]
+        [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ValidateOtp(ValidateOtpRequest request)
         {
             if (!ModelState.IsValid)
@@ -37,7 +40,24 @@ namespace PontoAPonto.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            return null;
+            var response = await _userService.ValidateOtpAsync(request);
+
+            return Ok(response);
+        }
+
+        [HttpPatch("/new-otp")]
+        [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GenerateNewOtp([FromBody] [Required] string email)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var response = await _userService.GenerateNewOtpAsync(email);
+
+            return Ok(response);
         }
     }
 }

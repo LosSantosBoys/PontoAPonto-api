@@ -8,6 +8,6 @@ namespace PontoAPonto.Domain.Dtos.Requests
         public string Email { get; set; }
 
         [Required]
-        public string Otp {  get; set; }
+        public int Otp { get; set; }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PontoAPonto.Data.Contexts;
-using PontoAPonto.Domain.Dtos.Responses;
 using PontoAPonto.Domain.Interfaces.Repositories;
 using PontoAPonto.Domain.Models.Entities;
 
@@ -15,10 +14,8 @@ namespace PontoAPonto.Data.Repositories
             _userContext = userContext;
         }
 
-        public async Task<bool> CreateUserOtpAsync(User user)
+        public async Task<bool> AddUserAsync(User user)
         {
-            var response = new BaseResponse<OtpUserResponse>();
-
             try
             {
                 await _userContext.Users.AddAsync(user);
@@ -28,6 +25,24 @@ namespace PontoAPonto.Data.Repositories
             {
                 return false;
             }
+        }
+
+        public async Task<bool> UpdateUserAsync(User user)
+        {
+            try
+            {
+                _userContext.Update(user);
+                return await _userContext.SaveChangesAsync() > 0;
+            }
+            catch (DbUpdateException ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<User> GetUserByEmailAsync(string email)
+        {
+            return await _userContext.Users.FirstAsync(x => x.Email == email);
         }
     }
 }
