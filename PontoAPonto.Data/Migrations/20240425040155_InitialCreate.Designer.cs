@@ -11,8 +11,8 @@ using PontoAPonto.Data.Contexts;
 namespace PontoAPonto.Data.Migrations
 {
     [DbContext(typeof(UserContext))]
-    [Migration("20240424030553_Initial")]
-    partial class Initial
+    [Migration("20240425040155_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -48,11 +48,11 @@ namespace PontoAPonto.Data.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("longtext");
+                    b.Property<byte[]>("PasswordHash")
+                        .HasColumnType("longblob");
 
-                    b.Property<string>("PasswordSalt")
-                        .HasColumnType("longtext");
+                    b.Property<byte[]>("PasswordSalt")
+                        .HasColumnType("longblob");
 
                     b.Property<string>("Phone")
                         .IsRequired()

@@ -17,8 +17,8 @@ namespace PontoAPonto.Domain.Models.Entities
 
         [MaxLength(255)]
         public string Status { get; private set; }
-        public string? PasswordHash { get; private set; }
-        public string? PasswordSalt { get; private set; }
+        public byte[]? PasswordHash { get; private set; }
+        public byte[]? PasswordSalt { get; private set; }
 
         [MaxLength(11)]
         public string? Cpf { get; private set; }
@@ -52,13 +52,19 @@ namespace PontoAPonto.Domain.Models.Entities
             return success;
         }
 
-        public void UpdateVerifiedUser(string passwordHash, string passwordSalt, string cpf, DateTime birthday)
+        public bool UpdateVerifiedUser(byte[] passwordHash, byte[] passwordSalt, string cpf, DateTime birthday)
         {
+            if (!Otp.IsVerified)
+                return false;
+
             PasswordHash = passwordHash;
             PasswordSalt = passwordSalt;
             Cpf = cpf;
             Birthday = birthday;
             Status = UserStatus.OtpVerified;
+            UpdatedAt = DateTime.Now;
+
+            return true;
         }
     }
 }

@@ -8,5 +8,6 @@ namespace PontoAPonto.Domain.Interfaces.Services
         Task<BaseResponse<OtpUserResponse>> CreateUserOtpAsync(OtpUserRequest request);
         Task<bool> ValidateOtpAsync(ValidateOtpRequest request);
         Task<bool> GenerateNewOtpAsync(string email);
+        Task<bool> FinishSignUpAsync(FinishSignupRequest request);
     }
 }

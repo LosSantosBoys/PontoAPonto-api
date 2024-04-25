@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace PontoAPonto.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -27,8 +27,8 @@ namespace PontoAPonto.Data.Migrations
                     Otp_Attempts = table.Column<int>(type: "int", nullable: false),
                     Otp_IsVerified = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     Status = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false),
-                    PasswordHash = table.Column<string>(type: "longtext", nullable: true),
-                    PasswordSalt = table.Column<string>(type: "longtext", nullable: true),
+                    PasswordHash = table.Column<byte[]>(type: "longblob", nullable: true),
+                    PasswordSalt = table.Column<byte[]>(type: "longblob", nullable: true),
                     Cpf = table.Column<string>(type: "varchar(11)", maxLength: 11, nullable: true),
                     Birthday = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),

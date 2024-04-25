@@ -14,12 +14,14 @@ namespace PontoAPonto.Service.Services
         private readonly IUserRepository _userRepository;
         private readonly IEmailService _emailService;
         private readonly IMapper _mapper;
+        private readonly IAuthService _authService;
 
-        public UserService(IUserRepository userRepository, IEmailService emailService, IMapper mapper)
+        public UserService(IUserRepository userRepository, IEmailService emailService, IMapper mapper, IAuthService authService)
         {
             _userRepository = userRepository;
             _emailService = emailService;
             _mapper = mapper;
+            _authService = authService;
         }
 
         public async Task<BaseResponse<OtpUserResponse>> CreateUserOtpAsync(OtpUserRequest request)
@@ -59,6 +61,21 @@ namespace PontoAPonto.Service.Services
 
             if(success)
                 await SendOtpEmailAsync(user.Email, user.Otp.Password);
+
+            return success;
+        }
+
+        public async Task<bool> FinishSignUpAsync(FinishSignupRequest request)
+        {
+            //TODO: Error messages + jwt auth?
+            var user = await _userRepository.GetUserByEmailAsync(request.Email);
+
+            _authService.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
+
+            var success = user.UpdateVerifiedUser(passwordHash, passwordSalt, request.Cpf, request.Birthday);
+
+            if(success)
+                await _userRepository.UpdateUserAsync(user);
 
             return success;
         }

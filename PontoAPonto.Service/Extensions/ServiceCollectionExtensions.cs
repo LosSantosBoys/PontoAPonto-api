@@ -25,6 +25,7 @@ namespace PontoAPonto.Service.Extensions
 
             //Services
             services.AddTransient<IUserService, UserService>();
+            services.AddScoped<IAuthService, AuthService>();
 
             return services;
         }

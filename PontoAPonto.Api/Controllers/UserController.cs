@@ -2,7 +2,6 @@
 using PontoAPonto.Domain.Dtos.Requests;
 using PontoAPonto.Domain.Dtos.Responses;
 using PontoAPonto.Domain.Interfaces.Services;
-using System.ComponentModel.DataAnnotations;
 
 namespace PontoAPonto.Api.Controllers
 {
@@ -16,7 +15,7 @@ namespace PontoAPonto.Api.Controllers
             _userService = userService;
         }
 
-        [HttpPost("/signup")]
+        [HttpPost("signup/start")]
         [ProducesResponseType(typeof(BaseResponse<OtpUserResponse>), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateUserOtp(OtpUserRequest request)
@@ -30,7 +29,7 @@ namespace PontoAPonto.Api.Controllers
             return StatusCode((int)response.StatusCode, response.Message);        
         }
 
-        [HttpPatch("/validate-otp")]
+        [HttpPatch("signup/otp/validate")]
         [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ValidateOtp(ValidateOtpRequest request)
@@ -45,17 +44,32 @@ namespace PontoAPonto.Api.Controllers
             return Ok(response);
         }
 
-        [HttpPatch("/new-otp")]
+        [HttpPatch("signup/otp/new")]
         [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GenerateNewOtp([FromBody] [Required] string email)
+        public async Task<IActionResult> GenerateNewOtp(GenerateNewOtpRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var response = await _userService.GenerateNewOtpAsync(email);
+            var response = await _userService.GenerateNewOtpAsync(request.Email);
+
+            return Ok(response);
+        }
+
+        [HttpPatch("signup/finish")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> FinishSignUp(FinishSignupRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var response = await _userService.FinishSignUpAsync(request);
 
             return Ok(response);
         }

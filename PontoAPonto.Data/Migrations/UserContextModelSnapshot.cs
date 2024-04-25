@@ -45,11 +45,11 @@ namespace PontoAPonto.Data.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("longtext");
+                    b.Property<byte[]>("PasswordHash")
+                        .HasColumnType("longblob");
 
-                    b.Property<string>("PasswordSalt")
-                        .HasColumnType("longtext");
+                    b.Property<byte[]>("PasswordSalt")
+                        .HasColumnType("longblob");
 
                     b.Property<string>("Phone")
                         .IsRequired()
