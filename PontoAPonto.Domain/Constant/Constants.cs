@@ -12,6 +12,8 @@
         {
             public const string UserOtpCreated = "User and OTP code created";
             public const string ErrorCreatingUserOtp = "Failed to create user.";
+            public const string SignInError = "Email and password does not match.";
+            public const string SignInSuccess = "SignIn success";
         }
 
         public struct Email

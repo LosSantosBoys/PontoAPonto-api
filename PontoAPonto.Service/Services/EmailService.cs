@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using PontoAPonto.Domain.Interfaces.Services;
+﻿using PontoAPonto.Domain.Interfaces.Services;
 using PontoAPonto.Domain.Models;
 using System.Net;
 using System.Net.Mail;
@@ -8,12 +7,10 @@ namespace PontoAPonto.Service.Services
 {
     public class EmailService : IEmailService
     {
-        private readonly IConfiguration _configuration;
         private readonly EmailConfig _email;
 
-        public EmailService(IConfiguration configuration, EmailConfig email)
+        public EmailService(EmailConfig email)
         {
-            _configuration = configuration;
             _email = email;
         }
 

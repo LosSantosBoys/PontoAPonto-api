@@ -73,5 +73,20 @@ namespace PontoAPonto.Api.Controllers
 
             return Ok(response);
         }
+
+        [HttpPost("signin")]
+        [ProducesResponseType(typeof(BaseResponse<SignInResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> SignIn(SignInRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var response = await _userService.SignInAsync(request);
+
+            return StatusCode((int)response.StatusCode, response);
+        }
     }
 }

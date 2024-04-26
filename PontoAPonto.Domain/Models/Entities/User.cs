@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Security.Cryptography;
+using System.Text;
 using static PontoAPonto.Domain.Constant.Constants;
 
 namespace PontoAPonto.Domain.Models.Entities
@@ -65,6 +67,18 @@ namespace PontoAPonto.Domain.Models.Entities
             UpdatedAt = DateTime.Now;
 
             return true;
+        }
+
+        public bool VerifyPasswordHash(string password)
+        {
+            if (PasswordHash == null || PasswordSalt == null)
+                return false;
+
+            using (var hmac = new HMACSHA512(PasswordSalt))
+            {
+                var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+                return computedHash.SequenceEqual(PasswordHash);
+            }
         }
     }
 }

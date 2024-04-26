@@ -80,8 +80,25 @@ namespace PontoAPonto.Service.Services
             return success;
         }
 
+        public async Task<BaseResponse<SignInResponse>> SignInAsync(SignInRequest request)
+        {
+            //TODO: Error messages
+            var response = new BaseResponse<SignInResponse>();
+            var user = await _userRepository.GetUserByEmailAsync(request.Email);
+
+            var passwordMatch = user.VerifyPasswordHash(request.Password);
+
+            if (!passwordMatch)
+                return response.CreateError(HttpStatusCode.BadRequest, ResponseMessages.SignInError);
+
+            var token = _authService.GenerateJwtToken();
+
+            return response.CreateSuccess(HttpStatusCode.Created, ResponseMessages.SignInSuccess, new SignInResponse { TokenType = "Bearer", Token = token });
+        }
+
         private async Task SendOtpEmailAsync(string email, int otpCode)
         {
+            //TODO: Error messages
             var body = new StringBuilder().AppendFormat(Email.BodyOtp, otpCode).ToString();
 
             await _emailService.SendEmailAsync(email, Email.SubjectOtp, body);
