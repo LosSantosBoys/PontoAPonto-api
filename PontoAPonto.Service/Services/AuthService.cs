@@ -35,6 +35,11 @@ namespace PontoAPonto.Service.Services
             }
         }
 
+        public string CreateRandomToken()
+        {
+            return Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
+        }
+
         public string GenerateJwtToken()
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtConfig.Key));

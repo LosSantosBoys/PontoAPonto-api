@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.IdentityModel.Tokens;
 using PontoAPonto.Domain.Dtos.Requests;
 using PontoAPonto.Domain.Dtos.Responses;
 using PontoAPonto.Domain.Interfaces.Repositories;
@@ -93,7 +94,30 @@ namespace PontoAPonto.Service.Services
 
             var token = _authService.GenerateJwtToken();
 
-            return response.CreateSuccess(HttpStatusCode.Created, ResponseMessages.SignInSuccess, new SignInResponse { TokenType = "Bearer", Token = token });
+            var responseData = new SignInResponse { TokenType = "Bearer", Token = token, IsFirstAccess = user.IsFirstAccess };
+
+            if (user.IsFirstAccess)
+            {
+                user.IsFirstAccess = false;
+                await _userRepository.UpdateUserAsync(user);
+            }
+
+            return response.CreateSuccess(HttpStatusCode.Created, ResponseMessages.SignInSuccess, responseData);
+        }
+
+        public async Task<bool> ForgotPasswordAsync(string email)
+        {
+            var user = await _userRepository.GetUserByEmailAsync(email);
+
+            if (user.PasswordHash.IsNullOrEmpty())
+                return false;
+
+            user.PasswordResetToken = _authService.CreateRandomToken();
+            user.ResetTokenExpiracy = DateTime.Now.AddMinutes(30);
+
+            await _userRepository.UpdateUserAsync(user);
+
+            return true;
         }
 
         private async Task SendOtpEmailAsync(string email, int otpCode)

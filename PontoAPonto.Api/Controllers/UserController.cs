@@ -2,6 +2,7 @@
 using PontoAPonto.Domain.Dtos.Requests;
 using PontoAPonto.Domain.Dtos.Responses;
 using PontoAPonto.Domain.Interfaces.Services;
+using System.ComponentModel.DataAnnotations;
 
 namespace PontoAPonto.Api.Controllers
 {
@@ -87,6 +88,16 @@ namespace PontoAPonto.Api.Controllers
             var response = await _userService.SignInAsync(request);
 
             return StatusCode((int)response.StatusCode, response);
+        }
+
+        [HttpPatch("forgot-password")]
+        [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ForgotPassword([Required] string email)
+        {
+            var response = await _userService.ForgotPasswordAsync(email);
+
+            return Ok(response);
         }
     }
 }

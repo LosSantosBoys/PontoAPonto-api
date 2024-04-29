@@ -16,12 +16,14 @@ namespace PontoAPonto.Domain.Models.Entities
         [MaxLength(13)]
         public string Phone { get; private set; }
         public Otp Otp { get; private set; }
+        public bool IsFirstAccess { get; set; }
 
         [MaxLength(255)]
         public string Status { get; private set; }
         public byte[]? PasswordHash { get; private set; }
         public byte[]? PasswordSalt { get; private set; }
-
+        public string? PasswordResetToken { get; set; }
+        public DateTime? ResetTokenExpiracy { get; set; }
         [MaxLength(11)]
         public string? Cpf { get; private set; }
         public DateTime? Birthday {  get; private set; }
@@ -34,8 +36,9 @@ namespace PontoAPonto.Domain.Models.Entities
                 Email = email,
                 Phone = phone,
                 Otp = new Otp(),
-                Status = UserStatus.WaitingOtpVerification
-            };
+                Status = UserStatus.WaitingOtpVerification,
+                IsFirstAccess = true
+        };
         }
 
         public bool ValidateOtp(int otpCode)
