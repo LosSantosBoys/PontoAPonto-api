@@ -7,5 +7,6 @@ namespace PontoAPonto.Domain.Interfaces.Repositories
         Task<bool> AddUserAsync(User user);
         Task<User> GetUserByEmailAsync(string email);
         Task<bool> UpdateUserAsync(User user);
+        Task<User> GetUserByTokenAsync(string token);
     }
 }

@@ -33,9 +33,9 @@ namespace PontoAPonto.Service.Services
             var success = await _userRepository.AddUserAsync(user);
 
             if (!success)
-                response.CreateError(HttpStatusCode.BadRequest, ResponseMessages.ErrorCreatingUserOtp);
+                return response.CreateError(HttpStatusCode.BadRequest, ResponseMessages.ErrorCreatingUserOtp);
 
-            await SendOtpEmailAsync(user.Email, user.Otp.Password);
+            await SendEmailAsync(user.Email, Email.SubjectOtp, user.Otp.Password.ToString());
             return response.CreateSuccess(HttpStatusCode.Created, ResponseMessages.UserOtpCreated, new OtpUserResponse { OtpCode = user.Otp.Password });
         }
 
@@ -60,8 +60,11 @@ namespace PontoAPonto.Service.Services
 
             await _userRepository.UpdateUserAsync(user);
 
-            if(success)
-                await SendOtpEmailAsync(user.Email, user.Otp.Password);
+            if (success)
+            {
+                var body = new StringBuilder().AppendFormat(Email.BodyOtp, user.Otp.Password).ToString();
+                await SendEmailAsync(email, Email.SubjectOtp, body);
+            }
 
             return success;
         }
@@ -115,17 +118,40 @@ namespace PontoAPonto.Service.Services
             user.PasswordResetToken = _authService.CreateRandomToken();
             user.ResetTokenExpiracy = DateTime.Now.AddMinutes(30);
 
+            var success = await _userRepository.UpdateUserAsync(user);
+
+            if (success)
+            {
+                var resetUrl = $"api/v1/user/reset-password?token={user.PasswordResetToken}";
+                var body = new StringBuilder().AppendFormat(Email.BodyForgotPassword, resetUrl).ToString();
+                await SendEmailAsync(email, Email.SubjectOtp, body);
+            }
+
+            return success;
+        }
+
+        public async Task<bool> ResetPasswordAsync(string token, ResetPasswordRequest request)
+        {
+            if (request.Password != request.ConfirmPassword)
+                return false;
+
+            var user = await _userRepository.GetUserByTokenAsync(token);
+
+            if (DateTime.Now > user.ResetTokenExpiracy)
+                return false;
+
+            _authService.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
+            user.ChangePassword(passwordHash, passwordSalt);
+
             await _userRepository.UpdateUserAsync(user);
 
             return true;
         }
 
-        private async Task SendOtpEmailAsync(string email, int otpCode)
+        private async Task SendEmailAsync(string email, string subject, string body)
         {
             //TODO: Error messages
-            var body = new StringBuilder().AppendFormat(Email.BodyOtp, otpCode).ToString();
-
-            await _emailService.SendEmailAsync(email, Email.SubjectOtp, body);
+            await _emailService.SendEmailAsync(email, subject, body);
         }
     }
 }

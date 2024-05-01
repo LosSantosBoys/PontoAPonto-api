@@ -44,5 +44,10 @@ namespace PontoAPonto.Data.Repositories
         {
             return await _userContext.Users.FirstAsync(x => x.Email == email);
         }
+
+        public async Task<User> GetUserByTokenAsync(string token)
+        {
+            return await _userContext.Users.FirstAsync(x => x.PasswordResetToken == token);
+        }
     }
 }

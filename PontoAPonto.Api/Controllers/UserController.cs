@@ -97,6 +97,22 @@ namespace PontoAPonto.Api.Controllers
         {
             var response = await _userService.ForgotPasswordAsync(email);
 
+
+            return Ok(response);
+        }
+
+        [HttpPatch("reset-password")]
+        [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ResetPassword(string token, [FromBody] ResetPasswordRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var response = await _userService.ResetPasswordAsync(token, request);
+
             return Ok(response);
         }
     }

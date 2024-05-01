@@ -45,6 +45,7 @@ namespace PontoAPonto.Domain.Models.Entities
         {
             var success = Otp.SendOtp(otpCode);
             UpdatedAt = DateTime.Now;
+            Status = UserStatus.OtpVerified;
 
             return success;
         }
@@ -66,7 +67,7 @@ namespace PontoAPonto.Domain.Models.Entities
             PasswordSalt = passwordSalt;
             Cpf = cpf;
             Birthday = birthday;
-            Status = UserStatus.OtpVerified;
+            Status = UserStatus.SignInAvailable;
             UpdatedAt = DateTime.Now;
 
             return true;
@@ -82,6 +83,14 @@ namespace PontoAPonto.Domain.Models.Entities
                 var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
                 return computedHash.SequenceEqual(PasswordHash);
             }
+        }
+
+        public void ChangePassword(byte[] passwordHash, byte[] passwordSalt)
+        {
+            PasswordResetToken = null;
+            ResetTokenExpiracy = null;
+            PasswordHash = passwordHash;
+            PasswordSalt = passwordSalt;
         }
     }
 }

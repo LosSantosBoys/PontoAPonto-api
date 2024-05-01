@@ -11,5 +11,6 @@ namespace PontoAPonto.Domain.Interfaces.Services
         Task<bool> FinishSignUpAsync(FinishSignupRequest request);
         Task<BaseResponse<SignInResponse>> SignInAsync(SignInRequest request);
         Task<bool> ForgotPasswordAsync(string email);
+        Task<bool> ResetPasswordAsync(string token, ResetPasswordRequest request);
     }
 }
