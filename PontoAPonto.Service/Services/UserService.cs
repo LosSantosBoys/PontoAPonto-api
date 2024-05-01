@@ -5,6 +5,7 @@ using PontoAPonto.Domain.Dtos.Responses;
 using PontoAPonto.Domain.Interfaces.Repositories;
 using PontoAPonto.Domain.Interfaces.Services;
 using System.Net;
+using System.Net.Mail;
 using System.Text;
 using static PontoAPonto.Domain.Constant.Constants;
 
@@ -25,18 +26,21 @@ namespace PontoAPonto.Service.Services
             _authService = authService;
         }
 
-        public async Task<BaseResponse<OtpUserResponse>> CreateUserOtpAsync(OtpUserRequest request)
+        public async Task<BaseResponse<OtpUserResponse>> CreateUserSignUpAsync(SignUpRequest request)
         {
-            //TODO: Proper error messages + check for duplicity in email and phone
-            var user = request.ToEntity();
+            //TODO: Proper error messages + check for duplicity in email, cpf and phone
+            _authService.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
+            var user = request.ToEntity(passwordHash, passwordSalt);
+
             var response = new BaseResponse<OtpUserResponse>();
             var success = await _userRepository.AddUserAsync(user);
 
             if (!success)
-                return response.CreateError(HttpStatusCode.BadRequest, ResponseMessages.ErrorCreatingUserOtp);
+                return response.CreateError(HttpStatusCode.BadRequest, ResponseMessages.ErrorCreatingUserSignUp);
 
-            await SendEmailAsync(user.Email, Email.SubjectOtp, user.Otp.Password.ToString());
-            return response.CreateSuccess(HttpStatusCode.Created, ResponseMessages.UserOtpCreated, new OtpUserResponse { OtpCode = user.Otp.Password });
+            var body = new StringBuilder().AppendFormat(Email.Html.BodySignUp, user.Name, user.Otp.Password).ToString();
+            await SendEmailAsync(user.Email, Email.SubjectOtp, body);
+            return response.CreateSuccess(HttpStatusCode.Created, ResponseMessages.UserSignUpCreated, new OtpUserResponse());
         }
 
         public async Task<bool> ValidateOtpAsync(ValidateOtpRequest request)
@@ -65,21 +69,6 @@ namespace PontoAPonto.Service.Services
                 var body = new StringBuilder().AppendFormat(Email.BodyOtp, user.Otp.Password).ToString();
                 await SendEmailAsync(email, Email.SubjectOtp, body);
             }
-
-            return success;
-        }
-
-        public async Task<bool> FinishSignUpAsync(FinishSignupRequest request)
-        {
-            //TODO: Error messages + jwt auth?
-            var user = await _userRepository.GetUserByEmailAsync(request.Email);
-
-            _authService.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
-
-            var success = user.UpdateVerifiedUser(passwordHash, passwordSalt, request.Cpf, request.Birthday);
-
-            if(success)
-                await _userRepository.UpdateUserAsync(user);
 
             return success;
         }

@@ -23,11 +23,14 @@ namespace PontoAPonto.Service.Services
                 Credentials = new NetworkCredential(_email.Email, _email.Password)
             };
 
-            await client.SendMailAsync(
-                new MailMessage(from: _email.Email,
-                                to: destination,
-                                subject,
-                                message));
+            var ms = new MailMessage(from: _email.Email,
+                               to: destination,
+                               subject,
+                               message);
+
+            ms.IsBodyHtml = true;
+
+            await client.SendMailAsync(ms);
         }
     }
 }

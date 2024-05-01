@@ -16,17 +16,17 @@ namespace PontoAPonto.Api.Controllers
             _userService = userService;
         }
 
-        [HttpPost("signup/start")]
+        [HttpPost("signup")]
         [ProducesResponseType(typeof(BaseResponse<OtpUserResponse>), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateUserOtp(OtpUserRequest request)
+        public async Task<IActionResult> CreateUserSignUp(SignUpRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var response = await _userService.CreateUserOtpAsync(request);
+            var response = await _userService.CreateUserSignUpAsync(request);
             return StatusCode((int)response.StatusCode, response.Message);        
         }
 
@@ -56,21 +56,6 @@ namespace PontoAPonto.Api.Controllers
             }
 
             var response = await _userService.GenerateNewOtpAsync(request.Email);
-
-            return Ok(response);
-        }
-
-        [HttpPatch("signup/finish")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> FinishSignUp(FinishSignupRequest request)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var response = await _userService.FinishSignUpAsync(request);
 
             return Ok(response);
         }

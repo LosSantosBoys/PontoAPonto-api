@@ -2,6 +2,5 @@
 {
     public class OtpUserResponse
     {
-        public int OtpCode { get; set; }
     }
 }

@@ -5,7 +5,7 @@
         public Otp()
         {
             Password = new Random().Next(1000, 9999);
-            Expiracy = DateTime.Now.AddMinutes(30);
+            Expiracy = DateTime.Now.AddMinutes(5);
             Attempts = 0;
             IsVerified = false;
         }
