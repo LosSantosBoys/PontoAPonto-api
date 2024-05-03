@@ -17,7 +17,7 @@ namespace PontoAPonto.Api.Controllers
         }
 
         [HttpPost("signup")]
-        [ProducesResponseType(typeof(BaseResponse<OtpUserResponse>), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(BaseResponse<SignUpResponse>), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateUserSignUp(SignUpRequest request)
         {
