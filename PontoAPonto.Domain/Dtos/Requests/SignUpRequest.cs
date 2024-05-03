@@ -22,11 +22,16 @@ namespace PontoAPonto.Domain.Dtos.Requests
         public string Cpf { get; set; }
 
         [Required]
-        public DateTime Birthday { get; set; }
+        public string Birthday { get; set; }
 
         public User ToEntity(byte[] passwordHash, byte[] passwordSalt)
         {
-            return new User().CreateUser(Name, Email, Phone, passwordHash, passwordSalt, Cpf, Birthday);
+            if (!DateTime.TryParseExact(Birthday, "ddMMyyyy", null, System.Globalization.DateTimeStyles.None, out DateTime birthdayDate))
+            {
+                throw new ArgumentException("Invalid birthday format. Please provide the birthday in the format 'ddMMyyyy'.");
+            }
+
+            return new User().CreateUser(Name, Email, Phone, passwordHash, passwordSalt, Cpf, birthdayDate);
         }
     }
 }

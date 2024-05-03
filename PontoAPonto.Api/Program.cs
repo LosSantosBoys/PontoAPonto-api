@@ -90,6 +90,12 @@ namespace PontoAPonto.Api
             app.UseHttpsRedirection();
             app.UseRouting();
 
+            app.UseCors(builder => builder //TODO - Define Policy
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                );
+
             app.UseAuthentication();
             app.UseAuthorization();
 

@@ -5,7 +5,7 @@ namespace PontoAPonto.Domain.Interfaces.Services
 {
     public interface IUserService
     {
-        Task<BaseResponse<OtpUserResponse>> CreateUserSignUpAsync(SignUpRequest request);
+        Task<BaseResponse<SignUpResponse>> CreateUserSignUpAsync(SignUpRequest request);
         Task<bool> ValidateOtpAsync(ValidateOtpRequest request);
         Task<bool> GenerateNewOtpAsync(string email);
         Task<BaseResponse<SignInResponse>> SignInAsync(SignInRequest request);

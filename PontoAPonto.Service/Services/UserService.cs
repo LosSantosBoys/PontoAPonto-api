@@ -26,13 +26,13 @@ namespace PontoAPonto.Service.Services
             _authService = authService;
         }
 
-        public async Task<BaseResponse<OtpUserResponse>> CreateUserSignUpAsync(SignUpRequest request)
+        public async Task<BaseResponse<SignUpResponse>> CreateUserSignUpAsync(SignUpRequest request)
         {
             //TODO: Proper error messages + check for duplicity in email, cpf and phone
             _authService.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
             var user = request.ToEntity(passwordHash, passwordSalt);
 
-            var response = new BaseResponse<OtpUserResponse>();
+            var response = new BaseResponse<SignUpResponse>();
             var success = await _userRepository.AddUserAsync(user);
 
             if (!success)
@@ -40,7 +40,7 @@ namespace PontoAPonto.Service.Services
 
             var body = new StringBuilder().AppendFormat(Email.Html.BodySignUp, user.Name, user.Otp.Password).ToString();
             await SendEmailAsync(user.Email, Email.SubjectOtp, body);
-            return response.CreateSuccess(HttpStatusCode.Created, ResponseMessages.UserSignUpCreated, new OtpUserResponse());
+            return response.CreateSuccess(HttpStatusCode.Created, ResponseMessages.UserSignUpCreated, new SignUpResponse());
         }
 
         public async Task<bool> ValidateOtpAsync(ValidateOtpRequest request)
