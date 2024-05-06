@@ -27,7 +27,7 @@ namespace PontoAPonto.Api.Controllers
             }
 
             var response = await _userService.CreateUserSignUpAsync(request);
-            return StatusCode((int)response.StatusCode, response.Message);        
+            return StatusCode((int)response.StatusCode, response);        
         }
 
         [HttpPatch("signup/otp/validate")]
