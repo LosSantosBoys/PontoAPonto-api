@@ -59,7 +59,15 @@ Agora em seu navegador, coloque a seguinte url (substituindo o YOUR_URL pela url
 http://YOUR_URL:5000/swagger/index.html
 ```
 
-Se tudo deu certo, você verá a página do swagger e pode presseguir para o aplicativo:
+Se tudo deu certo, você verá a página do swagger e pode executar o seguinte comando na CLI do Visual Studio ou de sua escolha:
+
+Na pasta PontoAPonto-api\PontoAPonto.Api
+
+```
+dotnet ef database update
+```
+
+Verifique se as tabelas foram criadas em seu MySQL, se sim, prosseguir para o aplicativo:
 
 https://github.com/LosSantosBoys/PontoAPonto
 
