@@ -30,6 +30,18 @@ namespace PontoAPonto.Domain.Dtos.Responses
 
         [JsonProperty("end_location")]
         public GoogleMapsLocation EndLocation { get; set; }
+
+        [JsonProperty("distance")]
+        public GoogleMapsDistance Distance { get; set; }
+
+        [JsonProperty("travel_mode")]
+        public string TravelMode { get; set; }
+    }
+
+    public class GoogleMapsDistance
+    {
+        [JsonProperty("value")]
+        public int Value { get; set; }
     }
 
     public class GoogleMapsLocation

@@ -16,9 +16,9 @@ namespace PontoAPonto.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetRoute([FromBody] GetRouteRequest request)
+        public async Task<IActionResult> GetRoute([FromQuery] GetRouteRequest request)
         {
-            var route = await _mapsService.GetRouteAsync(request.StartCoordinate, request.DestinationCoordinate, request.RouteMode);
+            var route = await _mapsService.GetRouteAsync(request);
 
             return Ok(route);
         }

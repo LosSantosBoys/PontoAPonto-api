@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using PontoAPonto.Domain.Dtos.Responses;
+using PontoAPonto.Domain.Enums;
 using PontoAPonto.Domain.Models.Maps;
 
 namespace PontoAPonto.Domain.Profiles
@@ -18,7 +19,9 @@ namespace PontoAPonto.Domain.Profiles
 
             CreateMap<GoogleMapsStep, Step>()
                 .ForMember(dest => dest.StartLocation, opt => opt.MapFrom(src => src.StartLocation))
-                .ForMember(dest => dest.EndLocation, opt => opt.MapFrom(src => src.EndLocation));
+                .ForMember(dest => dest.EndLocation, opt => opt.MapFrom(src => src.EndLocation))
+                .ForMember(dest => dest.Mode, opt => opt.MapFrom(src => RouteModesExtensions.ToEnum(src.TravelMode)))
+                .ForMember(dest => dest.MetersDistance, opt => opt.MapFrom(src => src.Distance.Value));
 
             CreateMap<GoogleMapsLocation, Coordinate>()
                 .ForMember(dest => dest.Latitude, opt => opt.MapFrom(src => src.Lat))

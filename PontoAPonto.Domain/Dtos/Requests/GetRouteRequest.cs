@@ -1,5 +1,4 @@
 ﻿using PontoAPonto.Domain.Enums;
-using PontoAPonto.Domain.Models.Maps;
 using System.ComponentModel.DataAnnotations;
 
 namespace PontoAPonto.Domain.Dtos.Requests
@@ -7,10 +6,21 @@ namespace PontoAPonto.Domain.Dtos.Requests
     public class GetRouteRequest
     {
         [Required]
-        public Coordinate StartCoordinate { get; set; }
+        public double StartLatitude { get; set; }
+
         [Required]
-        public Coordinate DestinationCoordinate {  get; set; }
+        public double StartLongitude { get; set; }
+
+        [Required]
+        public double DestinationLatitude { get; set; }
+
+        [Required]
+        public double DestinationLongitude { get; set; }
+
         [Required]
         public RouteMode RouteMode { get; set; }
+
+        [Required]
+        public UserRoutePreference UserRoutePreference { get; set; }
     }
 }

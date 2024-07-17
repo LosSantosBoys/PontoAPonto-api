@@ -9,7 +9,8 @@ using PontoAPonto.Infra.Configs;
 using PontoAPonto.Data.Contexts;
 using PontoAPonto.Domain.Interfaces.Rest;
 using PontoAPonto.Data.Rest;
-using System.Globalization;
+using PontoAPonto.Domain.Interfaces.WebScrapper;
+using PontoAPonto.Data.WebScrapper;
 
 namespace PontoAPonto.Service.Extensions
 {
@@ -26,6 +27,7 @@ namespace PontoAPonto.Service.Extensions
             services.AddDbContext<UserContext>();
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IMapsApi, MapsApi>();
+            services.AddTransient<IGasPriceScrapper, GasPriceScrapper>();
 
             //Services
             services.AddTransient<IUserService, UserService>();

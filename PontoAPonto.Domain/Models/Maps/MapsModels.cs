@@ -1,7 +1,10 @@
-﻿namespace PontoAPonto.Domain.Models.Maps
+﻿using PontoAPonto.Domain.Enums;
+
+namespace PontoAPonto.Domain.Models.Maps
 {
     public class Route
     {
+        public decimal Cost { get; set; }
         public int Duration { get; set; }
         public List<Leg> Legs { get; set; }
     }
@@ -14,6 +17,8 @@
 
     public class Step
     {
+        public int MetersDistance { get; set; }
+        public RouteMode Mode { get; set; }
         public Coordinate StartLocation { get; set; }
         public Coordinate EndLocation { get; set; }
     }
@@ -39,6 +44,11 @@
     {
         public string Name { get; set; }
         public Coordinate Coordinate { get; set; }
-        public string Mode { get; set; }
+        public RouteMode Mode { get; set; }
+
+        public static implicit operator Coordinate(PointOfInterest pointOfInterest) 
+        {
+            return pointOfInterest.Coordinate;
+        }
     }
 }

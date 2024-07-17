@@ -23,5 +23,20 @@
                     throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
             }
         }
+
+        public static RouteMode ToEnum(string mode)
+        {
+            switch (mode.ToLower())
+            {
+                case "driving":
+                    return RouteMode.DRIVING;
+                case "walking":
+                    return RouteMode.WALKING;
+                case "transit":
+                    return RouteMode.TRANSIT;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
+            }
+        }
     }
 }

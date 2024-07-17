@@ -1,55 +1,149 @@
 using AutoMapper;
+using PontoAPonto.Domain.Dtos.Requests;
 using PontoAPonto.Domain.Dtos.Responses;
 using PontoAPonto.Domain.Enums;
 using PontoAPonto.Domain.Interfaces.Rest;
+using PontoAPonto.Domain.Interfaces.WebScrapper;
 using PontoAPonto.Domain.Models.Maps;
 
 public class MapsService : IMapsService
 {
     private readonly IMapsApi _mapsApi;
     private readonly IMapper _mapper;
+    private readonly IGasPriceScrapper _gasPriceScrapper;
     private readonly double _proximityThreshold;
 
-    public MapsService(IMapsApi mapsApi, IMapper mapper, double proximityThreshold = 2000) //TODO - PARAMETRIZE FOR USER VALUE
+    public MapsService(IMapsApi mapsApi, 
+        IMapper mapper, 
+        IGasPriceScrapper gasPriceScrapper, 
+        double proximityThreshold = 2000) //TODO - PARAMETRIZE FOR USER VALUE
     {
         _mapsApi = mapsApi;
         _mapper = mapper;
+        _gasPriceScrapper = gasPriceScrapper;
         _proximityThreshold = proximityThreshold;
     }
 
-    public async Task<RouteResponse> GetRouteAsync(Coordinate start, Coordinate destination, RouteMode mode)
+    public async Task<RouteResponse> GetRouteAsync(GetRouteRequest request)
     {
-        var response = new RouteResponse();
-        var originalRoute = await _mapsApi.GetRouteAsync(start, destination, mode);
+        var start = new Coordinate(request.StartLatitude, request.StartLongitude);
+        var dest = new Coordinate(request.DestinationLatitude, request.DestinationLongitude);
 
-        response.OriginalRoute = _mapper.Map<Route>(originalRoute);
+        var originalRoute = await GetGoogleRouteAsync(start, dest, request.RouteMode);
+        originalRoute.Cost = await CalculateRouteCost(originalRoute);
+
+        var response = new RouteResponse(originalRoute);
 
         var pointsOfInterest = GetPointsOfInterestAsync();
 
-        foreach (var point in pointsOfInterest)
+        var hybridRoutesTasks = pointsOfInterest
+            .Where(point => IsPointNearRoute(originalRoute, point))
+            .Select(point => CheckRoutePointOfInterestAsync(start, dest, point))
+            .ToList();
+
+        var hybridRoutes = await Task.WhenAll(hybridRoutesTasks);
+
+        foreach (var hybridRoute in hybridRoutes)
         {
-            if (IsPointNearRoute(originalRoute, point))
+            response.HybridRoutes.Add(hybridRoute);
+
+            if (hybridRoute.Duration < response.FasterRoute.Duration)
             {
-                var pointCoordinate = new Coordinate(point.Coordinate.Latitude, point.Coordinate.Longitude);
+                response.FasterRoute = hybridRoute;
+            }
 
-                var startToPoint = await _mapsApi.GetRouteAsync(start, pointCoordinate, mode);
+            if (hybridRoute.Cost < response.CheapestRoute.Cost)
+            {
+                response.CheapestRoute = hybridRoute;
+            }
+        }
 
-                var routeStartToPoint = _mapper.Map<Route>(startToPoint);
+        response.RecommendedRoute = GetRecommendedRoute(response, request.UserRoutePreference);
 
-                var pointToDest = await _mapsApi.GetRouteAsync(pointCoordinate, destination, point.Mode);
+        return response;
+    }
 
-                var routePointToDest = _mapper.Map<Route>(pointToDest);
+    private Route GetRecommendedRoute(RouteResponse response, UserRoutePreference preference)
+    {
+        switch (preference)
+        {
+            case UserRoutePreference.CHEAPEST:
+                return response.CheapestRoute;
+            case UserRoutePreference.FASTER:
+                return response.FasterRoute;
+            case UserRoutePreference.HYBRID:
+                return response.HybridRoutes.OrderBy(r => r.Duration + r.Cost).FirstOrDefault() ?? response.OriginalRoute;
+            case UserRoutePreference.ECOLOGIC:
+                return response.HybridRoutes.OrderBy(r => r.Duration).FirstOrDefault() ?? response.OriginalRoute; //TODO - DEFINE
+            case UserRoutePreference.COMFIEST:
+                return response.HybridRoutes.OrderBy(r => r.Duration).FirstOrDefault() ?? response.OriginalRoute; //TODO - DEFINE
+            default:
+                return response.OriginalRoute;
+        }
+    }
 
-                var totalTime = routeStartToPoint.Duration + routePointToDest.Duration;
-                
-                if (totalTime < originalRoute.Duration)
+    private async Task<Route> CheckRoutePointOfInterestAsync(Coordinate start, Coordinate dest, PointOfInterest point)
+    {
+        var startToPoint = await GetGoogleRouteAsync(start, point, point.Mode);
+        var pointToDest = await GetGoogleRouteAsync(point, dest, point.Mode);
+
+        var hybridRoute = MergeRoutes(startToPoint, pointToDest);
+        hybridRoute.Cost = await CalculateRouteCost(hybridRoute);
+
+        return hybridRoute;
+    }
+
+    private async Task<decimal> CalculateRouteCost(Route route)
+    {
+        decimal.TryParse(await _gasPriceScrapper.GetGasolinePriceAsync(), out decimal gasPrice);
+
+        const decimal costPerPublicTransport = 5.50m; // WEBSCRAPPER FOR BUS/METRO PRICE?
+        const decimal kmPerLiter = 10m;
+
+        decimal drivingDistance = 0m;
+        decimal publicTransportCost = 0m;
+
+        foreach (var leg in route.Legs)
+        {
+            foreach (var step in leg.Steps)
+            {
+
+                if (step.Mode == RouteMode.DRIVING)
                 {
-                    response.FasterRoute = routeStartToPoint;
+                    drivingDistance += step.MetersDistance / 1000.0m;
+                }
+                else if (step.Mode == RouteMode.TRANSIT)
+                {
+                    publicTransportCost += costPerPublicTransport;
                 }
             }
         }
 
-        return response;
+        decimal fuelConsumed = drivingDistance / kmPerLiter;
+        decimal fuelCost = fuelConsumed * gasPrice;
+
+        return fuelCost + publicTransportCost;
+    }
+
+    private Route MergeRoutes(Route leg1, Route leg2)
+    {
+        var mergedRoute = new Route
+        {
+            Legs = new List<Leg>()
+        };
+
+        mergedRoute.Legs.AddRange(leg1.Legs);
+        mergedRoute.Legs.AddRange(leg2.Legs);
+
+        mergedRoute.Duration = leg1.Duration + leg2.Duration;
+
+        return mergedRoute;
+    }
+
+    private async Task<Route> GetGoogleRouteAsync(Coordinate start, Coordinate destination, RouteMode mode)
+    {
+        var route = await _mapsApi.GetRouteAsync(start, destination, mode.ToGoogleMapsString());
+        return _mapper.Map<Route>(route);
     }
 
     private IEnumerable<PointOfInterest> GetPointsOfInterestAsync()
@@ -57,7 +151,7 @@ public class MapsService : IMapsService
         //TODO - DATABASE FOR EACH USER DEFINE THEIR POINT OF INTEREST + GLOBAL POINTS OF INTERESTS 
         return new List<PointOfInterest>
         {
-            new PointOfInterest { Name = "Estação de Metrô Tamanduatei", Coordinate = new Coordinate(-23.592741196050046, -46.58945103397126), Mode = "transit" },
+            new PointOfInterest { Name = "Estação de Metrô Tamanduatei", Coordinate = new Coordinate(-23.592741196050046, -46.58945103397126), Mode = RouteMode.TRANSIT },
         };
     }
 
