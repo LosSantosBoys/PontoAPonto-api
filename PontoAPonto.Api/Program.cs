@@ -5,6 +5,8 @@ using PontoAPonto.Service.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
+using PontoAPonto.Domain.Interfaces.Rest;
+using PontoAPonto.Data.Rest;
 
 namespace PontoAPonto.Api
 {
@@ -77,6 +79,7 @@ namespace PontoAPonto.Api
                     };
                 });
 
+            builder.Services.AddHttpClient<IMapsApi, MapsApi>();
 
             var app = builder.Build();
 

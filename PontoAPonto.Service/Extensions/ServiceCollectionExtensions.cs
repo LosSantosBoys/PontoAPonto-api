@@ -7,6 +7,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PontoAPonto.Infra.Configs;
 using PontoAPonto.Data.Contexts;
+using PontoAPonto.Domain.Interfaces.Rest;
+using PontoAPonto.Data.Rest;
+using System.Globalization;
 
 namespace PontoAPonto.Service.Extensions
 {
@@ -22,10 +25,12 @@ namespace PontoAPonto.Service.Extensions
             //Repositories
             services.AddDbContext<UserContext>();
             services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IMapsApi, MapsApi>();
 
             //Services
             services.AddTransient<IUserService, UserService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddTransient<IMapsService, MapsService>();
 
             return services;
         }
