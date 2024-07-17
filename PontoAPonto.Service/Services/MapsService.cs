@@ -2,6 +2,7 @@ using AutoMapper;
 using PontoAPonto.Domain.Dtos.Requests;
 using PontoAPonto.Domain.Dtos.Responses;
 using PontoAPonto.Domain.Enums;
+using PontoAPonto.Domain.Interfaces.Infra;
 using PontoAPonto.Domain.Interfaces.Rest;
 using PontoAPonto.Domain.Interfaces.WebScrapper;
 using PontoAPonto.Domain.Models.Maps;
@@ -11,16 +12,19 @@ public class MapsService : IMapsService
     private readonly IMapsApi _mapsApi;
     private readonly IMapper _mapper;
     private readonly IGasPriceScrapper _gasPriceScrapper;
+    private readonly IRedisService _redisService;
     private readonly double _proximityThreshold;
 
-    public MapsService(IMapsApi mapsApi, 
-        IMapper mapper, 
-        IGasPriceScrapper gasPriceScrapper, 
+    public MapsService(IMapsApi mapsApi,
+        IMapper mapper,
+        IGasPriceScrapper gasPriceScrapper,
+        IRedisService redisService,
         double proximityThreshold = 2000) //TODO - PARAMETRIZE FOR USER VALUE
     {
         _mapsApi = mapsApi;
         _mapper = mapper;
         _gasPriceScrapper = gasPriceScrapper;
+        _redisService = redisService;
         _proximityThreshold = proximityThreshold;
     }
 
@@ -142,8 +146,27 @@ public class MapsService : IMapsService
 
     private async Task<Route> GetGoogleRouteAsync(Coordinate start, Coordinate destination, RouteMode mode)
     {
+        var response = new Route();
+        var cacheKey = $"{start.Latitude}-{start.Longitude}-{destination.Latitude}-{destination.Longitude}-{mode}";
+
+        var cacheExist = await _redisService.ExistsAsync(cacheKey);
+
+        if (cacheExist)
+        {
+            response = await _redisService.GetAsync<Route>(cacheKey);
+
+            if (response != null)
+            {
+                return response;
+            }
+        }
+
         var route = await _mapsApi.GetRouteAsync(start, destination, mode.ToGoogleMapsString());
-        return _mapper.Map<Route>(route);
+        response = _mapper.Map<Route>(route);
+
+        await _redisService.SetAsync(cacheKey, response, TimeSpan.FromMinutes(30));
+
+        return response;
     }
 
     private IEnumerable<PointOfInterest> GetPointsOfInterestAsync()

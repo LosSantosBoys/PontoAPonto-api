@@ -11,6 +11,7 @@ using PontoAPonto.Domain.Interfaces.Rest;
 using PontoAPonto.Data.Rest;
 using PontoAPonto.Domain.Interfaces.WebScrapper;
 using PontoAPonto.Data.WebScrapper;
+using PontoAPonto.Data.Cache;
 
 namespace PontoAPonto.Service.Extensions
 {
@@ -22,6 +23,7 @@ namespace PontoAPonto.Service.Extensions
             services.AddSingleton<IConnStringProvider, ConnStringProvider>();
             services.AddSingleton<IEmailService, EmailService>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddSingleton<IRedisService, RedisService>();
 
             //Repositories
             services.AddDbContext<UserContext>();
