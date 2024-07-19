@@ -1,12 +1,14 @@
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
-using PontoAPonto.Domain.Models;
 using PontoAPonto.Service.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using PontoAPonto.Domain.Interfaces.Rest;
 using PontoAPonto.Data.Rest;
+using PontoAPonto.Domain.Models.Configs;
+using Microsoft.EntityFrameworkCore;
+using PontoAPonto.Data.Contexts;
 
 namespace PontoAPonto.Api
 {
@@ -53,12 +55,16 @@ namespace PontoAPonto.Api
             var configuration = builder.Configuration;
             builder.Services.AddServices(configuration);
 
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+            builder.Services.AddDbContext<UserContext>(options =>
+                options.UseMySQL(connectionString));
+
             // Add Singleton appsettings objects
-            builder.Services.AddOptions<EmailConfig>()
-                .Bind(builder.Configuration.GetSection("EmailConfig"));
+            builder.Services.Configure<KeysConfig>(builder.Configuration.GetSection("ConnectionStrings"));
+            builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<KeysConfig>>().Value);
+            builder.Services.Configure<EmailConfig>(builder.Configuration.GetSection("EmailConfig"));
             builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<EmailConfig>>().Value);
-            builder.Services.AddOptions<JwtConfig>()
-                .Bind(builder.Configuration.GetSection("Jwt"));
+            builder.Services.Configure<JwtConfig>(builder.Configuration.GetSection("Jwt"));
             builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<JwtConfig>>().Value);
 
             // Add services

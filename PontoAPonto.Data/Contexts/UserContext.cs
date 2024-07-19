@@ -1,22 +1,26 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PontoAPonto.Domain.Interfaces.Infra;
+using PontoAPonto.Domain.Models.Configs;
 using PontoAPonto.Domain.Models.Entities;
 
 namespace PontoAPonto.Data.Contexts
 {
     public class UserContext : DbContext
     {
-        private readonly IConnStringProvider _connStringProvider;
+        private readonly KeysConfig _keyConfig;
+
         public DbSet<User> Users { get; set; }
 
-        public UserContext(DbContextOptions<UserContext> opt, IConnStringProvider connStringProvider) : base(opt)
+        public UserContext(DbContextOptions<UserContext> opt) : base(opt)
         {
-            _connStringProvider = connStringProvider;
+            
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            optionsBuilder.UseMySQL(_connStringProvider.ConnectionString);
+            if (!options.IsConfigured)
+            {
+                options.UseMySQL("");
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -1,7 +1,7 @@
 ﻿using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using PontoAPonto.Domain.Interfaces.Services;
-using PontoAPonto.Domain.Models;
+using PontoAPonto.Domain.Models.Configs;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;

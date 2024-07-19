@@ -1,4 +1,4 @@
-﻿namespace PontoAPonto.Domain.Models
+﻿namespace PontoAPonto.Domain.Models.Configs
 {
     public class EmailConfig
     {

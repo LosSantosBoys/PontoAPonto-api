@@ -5,7 +5,6 @@ using PontoAPonto.Domain.Interfaces.Services;
 using PontoAPonto.Service.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using PontoAPonto.Infra.Configs;
 using PontoAPonto.Data.Contexts;
 using PontoAPonto.Domain.Interfaces.Rest;
 using PontoAPonto.Data.Rest;
@@ -20,7 +19,6 @@ namespace PontoAPonto.Service.Extensions
         public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
         {
             //Infra
-            services.AddSingleton<IConnStringProvider, ConnStringProvider>();
             services.AddSingleton<IEmailService, EmailService>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddSingleton<IRedisService, RedisService>();

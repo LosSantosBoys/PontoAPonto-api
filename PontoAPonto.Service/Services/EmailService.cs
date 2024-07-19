@@ -1,5 +1,5 @@
 ﻿using PontoAPonto.Domain.Interfaces.Services;
-using PontoAPonto.Domain.Models;
+using PontoAPonto.Domain.Models.Configs;
 using System.Net;
 using System.Net.Mail;
 
