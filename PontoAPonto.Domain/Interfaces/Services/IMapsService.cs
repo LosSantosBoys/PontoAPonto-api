@@ -1,7 +1,8 @@
 using PontoAPonto.Domain.Dtos.Requests;
 using PontoAPonto.Domain.Dtos.Responses;
+using PontoAPonto.Domain.Models;
 
 public interface IMapsService
 {
-    Task<RouteResponse> GetRouteAsync(GetRouteRequest request);
+    Task<CustomActionResult<RouteResponse>> GetRouteAsync(GetRouteRequest request);
 }

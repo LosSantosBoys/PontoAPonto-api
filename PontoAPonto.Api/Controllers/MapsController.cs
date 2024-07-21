@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PontoAPonto.Domain.Dtos.Requests;
+using PontoAPonto.Domain.Dtos.Responses;
+using PontoAPonto.Domain.Models;
 using PontoAPonto.Domain.Models.Maps;
 
 namespace PontoAPonto.Api.Controllers
@@ -16,11 +18,9 @@ namespace PontoAPonto.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetRoute([FromQuery] GetRouteRequest request)
+        public async Task<CustomActionResult<RouteResponse>> GetRoute([FromQuery] GetRouteRequest request)
         {
-            var route = await _mapsService.GetRouteAsync(request);
-
-            return Ok(route);
+            return await _mapsService.GetRouteAsync(request);
         }
     }
 }

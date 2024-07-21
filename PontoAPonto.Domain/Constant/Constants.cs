@@ -59,5 +59,10 @@ namespace PontoAPonto.Domain.Constant
 
             }
         }
+
+        public struct ErrorCodes
+        {
+            public const string HttpError = "E01";
+        }
     }
 }

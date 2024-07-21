@@ -60,12 +60,17 @@ namespace PontoAPonto.Api
                 options.UseMySQL(connectionString));
 
             // Add Singleton appsettings objects
+            // TODO - DESERIALIZE INTO SINGLE OBJECT
             builder.Services.Configure<KeysConfig>(builder.Configuration.GetSection("ConnectionStrings"));
             builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<KeysConfig>>().Value);
             builder.Services.Configure<EmailConfig>(builder.Configuration.GetSection("EmailConfig"));
             builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<EmailConfig>>().Value);
             builder.Services.Configure<JwtConfig>(builder.Configuration.GetSection("Jwt"));
             builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<JwtConfig>>().Value);
+            builder.Services.Configure<ApiKeys>(builder.Configuration.GetSection("ApiKeys"));
+            builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<ApiKeys>>().Value);
+            builder.Services.Configure<RedisConfig>(builder.Configuration.GetSection("RedisConfig"));
+            builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<RedisConfig>>().Value);
 
             // Add services
             builder.Services

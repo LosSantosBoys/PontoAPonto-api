@@ -10,16 +10,16 @@ namespace PontoAPonto.Data.Contexts
 
         public DbSet<User> Users { get; set; }
 
-        public UserContext(DbContextOptions<UserContext> opt) : base(opt)
+        public UserContext(DbContextOptions<UserContext> opt, KeysConfig keyConfig) : base(opt)
         {
-            
+            _keyConfig = keyConfig;
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
             if (!options.IsConfigured)
             {
-                options.UseMySQL("");
+                options.UseMySQL(_keyConfig.DefaultConnection);
             }
         }
 

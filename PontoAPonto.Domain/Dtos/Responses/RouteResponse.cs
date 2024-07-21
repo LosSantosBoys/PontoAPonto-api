@@ -1,14 +1,10 @@
-﻿using PontoAPonto.Domain.Models.Maps;
+﻿using PontoAPonto.Domain.Models;
+using PontoAPonto.Domain.Models.Maps;
 
 namespace PontoAPonto.Domain.Dtos.Responses
 {
     public class RouteResponse
     {
-        public RouteResponse()
-        {
-            
-        }
-
         public RouteResponse(Route defaultRoute)
         {
             OriginalRoute = defaultRoute;
@@ -18,10 +14,10 @@ namespace PontoAPonto.Domain.Dtos.Responses
             RecommendedRoute = defaultRoute;
         }
 
-        public Route OriginalRoute { get; set; }
-        public List<Route> HybridRoutes { get; set; }
-        public Route FasterRoute { get; set; }
-        public Route CheapestRoute { get; set; }
-        public Route RecommendedRoute { get; set; }
+        public CustomActionResult<Route> OriginalRoute { get; set; }
+        public List<CustomActionResult<Route>> HybridRoutes { get; set; }
+        public CustomActionResult<Route> FasterRoute { get; set; }
+        public CustomActionResult<Route> CheapestRoute { get; set; }
+        public CustomActionResult<Route> RecommendedRoute { get; set; }
     }
 }

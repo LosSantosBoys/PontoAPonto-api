@@ -5,6 +5,7 @@ using PontoAPonto.Domain.Enums;
 using PontoAPonto.Domain.Interfaces.Infra;
 using PontoAPonto.Domain.Interfaces.Rest;
 using PontoAPonto.Domain.Interfaces.WebScrapper;
+using PontoAPonto.Domain.Models;
 using PontoAPonto.Domain.Models.Maps;
 
 public class MapsService : IMapsService
@@ -28,43 +29,66 @@ public class MapsService : IMapsService
         _proximityThreshold = proximityThreshold;
     }
 
-    public async Task<RouteResponse> GetRouteAsync(GetRouteRequest request)
+    public async Task<CustomActionResult<RouteResponse>> GetRouteAsync(GetRouteRequest request)
     {
-        var start = new Coordinate(request.StartLatitude, request.StartLongitude);
-        var dest = new Coordinate(request.DestinationLatitude, request.DestinationLongitude);
+        var response = await GetDefaultRoutesAsync(request);
 
-        var originalRoute = await GetGoogleRouteAsync(start, dest, request.RouteMode);
-        originalRoute.Cost = await CalculateRouteCost(originalRoute);
+        var hybridRoutes = await GetHybridRoutesAsync(request, response);
 
-        var response = new RouteResponse(originalRoute);
+        CalculateBestRoutes(request, response, hybridRoutes);
 
-        var pointsOfInterest = GetPointsOfInterestAsync();
+        return response;
+    }
 
-        var hybridRoutesTasks = pointsOfInterest
-            .Where(point => IsPointNearRoute(originalRoute, point))
-            .Select(point => CheckRoutePointOfInterestAsync(start, dest, point))
-            .ToList();
-
-        var hybridRoutes = await Task.WhenAll(hybridRoutesTasks);
-
+    private void CalculateBestRoutes(GetRouteRequest request, CustomActionResult<RouteResponse> response, CustomActionResult<Route>[] hybridRoutes)
+    {
         foreach (var hybridRoute in hybridRoutes)
         {
-            response.HybridRoutes.Add(hybridRoute);
+            response.Value.HybridRoutes.Add(hybridRoute.Value);
 
-            if (hybridRoute.Duration < response.FasterRoute.Duration)
+            if (hybridRoute.Value.Duration < response.Value.FasterRoute.Value.Duration)
             {
-                response.FasterRoute = hybridRoute;
+                response.Value.FasterRoute = hybridRoute.Value;
             }
 
-            if (hybridRoute.Cost < response.CheapestRoute.Cost)
+            if (hybridRoute.Value.Cost < response.Value.CheapestRoute.Value.Cost)
             {
-                response.CheapestRoute = hybridRoute;
+                response.Value.CheapestRoute = hybridRoute.Value;
             }
         }
 
-        response.RecommendedRoute = GetRecommendedRoute(response, request.UserRoutePreference);
+        response.Value.RecommendedRoute = GetRecommendedRoute(response.Value, request.UserRoutePreference);
+    }
 
-        return response;
+    private async Task<CustomActionResult<Route>[]> GetHybridRoutesAsync(GetRouteRequest request, CustomActionResult<RouteResponse> response)
+    {
+        var pointsOfInterest = GetPointsOfInterestAsync();
+
+        var hybridRoutesTasks = pointsOfInterest
+            .Where(point => IsPointNearRoute(response.Value.OriginalRoute, point))
+            .Select(point => CheckRoutePointOfInterestAsync(new Coordinate(request.StartLatitude, request.StartLongitude),
+            new Coordinate(request.DestinationLatitude, request.DestinationLongitude),
+            point))
+            .ToList();
+
+        var hybridRoutes = await Task.WhenAll(hybridRoutesTasks);
+        return hybridRoutes;
+    }
+
+    private async Task<CustomActionResult<RouteResponse>> GetDefaultRoutesAsync(GetRouteRequest request)
+    {
+        var start = new Coordinate(request.StartLatitude, request.StartLongitude);
+        var dest = new Coordinate(request.DestinationLatitude, request.DestinationLongitude);
+        var originalRoute = await GetGoogleRouteAsync(start, dest, request.RouteMode);
+
+        if (!originalRoute.Success)
+        {
+            return originalRoute.Error;
+        }
+
+        originalRoute.Value.Cost = await CalculateRouteCost(originalRoute.Value);
+
+        return new RouteResponse(originalRoute);
     }
 
     private Route GetRecommendedRoute(RouteResponse response, UserRoutePreference preference)
@@ -72,26 +96,47 @@ public class MapsService : IMapsService
         switch (preference)
         {
             case UserRoutePreference.CHEAPEST:
-                return response.CheapestRoute;
+                return response.CheapestRoute.Success ? response.CheapestRoute.Value : response.OriginalRoute.Value;
             case UserRoutePreference.FASTER:
-                return response.FasterRoute;
+                return response.FasterRoute.Success ? response.FasterRoute.Value : response.OriginalRoute.Value;
             case UserRoutePreference.HYBRID:
-                return response.HybridRoutes.OrderBy(r => r.Duration + r.Cost).FirstOrDefault() ?? response.OriginalRoute;
+                return response.HybridRoutes
+                    .Where(r => r.Success)
+                    .OrderBy(r => r.Value.Duration + r.Value.Cost)
+                    .FirstOrDefault()?.Value ?? response.OriginalRoute.Value;
             case UserRoutePreference.ECOLOGIC:
-                return response.HybridRoutes.OrderBy(r => r.Duration).FirstOrDefault() ?? response.OriginalRoute; //TODO - DEFINE
+                return response.HybridRoutes
+                    .Where(r => r.Success)
+                    .OrderBy(r => r.Value.Duration)
+                    .FirstOrDefault()?.Value ?? response.OriginalRoute.Value;
             case UserRoutePreference.COMFIEST:
-                return response.HybridRoutes.OrderBy(r => r.Duration).FirstOrDefault() ?? response.OriginalRoute; //TODO - DEFINE
+                return response.HybridRoutes
+                    .Where(r => r.Success)
+                    .OrderBy(r => r.Value.Duration)
+                    .FirstOrDefault()?.Value ?? response.OriginalRoute.Value;
             default:
-                return response.OriginalRoute;
+                return response.OriginalRoute.Value;
         }
     }
 
-    private async Task<Route> CheckRoutePointOfInterestAsync(Coordinate start, Coordinate dest, PointOfInterest point)
+
+    private async Task<CustomActionResult<Route>> CheckRoutePointOfInterestAsync(Coordinate start, Coordinate dest, PointOfInterest point)
     {
         var startToPoint = await GetGoogleRouteAsync(start, point, point.Mode);
+
+        if (!startToPoint.Success)
+        {
+            return startToPoint.Error;
+        }
+
         var pointToDest = await GetGoogleRouteAsync(point, dest, point.Mode);
 
-        var hybridRoute = MergeRoutes(startToPoint, pointToDest);
+        if (!pointToDest.Success)
+        {
+            return pointToDest.Error;
+        }
+
+        var hybridRoute = MergeRoutes(startToPoint.Value, pointToDest.Value);
         hybridRoute.Cost = await CalculateRouteCost(hybridRoute);
 
         return hybridRoute;
@@ -144,7 +189,7 @@ public class MapsService : IMapsService
         return mergedRoute;
     }
 
-    private async Task<Route> GetGoogleRouteAsync(Coordinate start, Coordinate destination, RouteMode mode)
+    private async Task<CustomActionResult<Route>> GetGoogleRouteAsync(Coordinate start, Coordinate destination, RouteMode mode)
     {
         var response = new Route();
         var cacheKey = $"{start.Latitude}-{start.Longitude}-{destination.Latitude}-{destination.Longitude}-{mode}";
@@ -162,6 +207,12 @@ public class MapsService : IMapsService
         }
 
         var route = await _mapsApi.GetRouteAsync(start, destination, mode.ToGoogleMapsString());
+
+        if (!route.Success) 
+        {
+            return route.Error;
+        }
+
         response = _mapper.Map<Route>(route);
 
         await _redisService.SetAsync(cacheKey, response, TimeSpan.FromMinutes(30));

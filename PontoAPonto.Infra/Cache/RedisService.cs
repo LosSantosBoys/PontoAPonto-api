@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using PontoAPonto.Domain.Interfaces.Infra;
+using PontoAPonto.Domain.Models.Configs;
 using StackExchange.Redis;
 using System.ComponentModel;
 
@@ -9,13 +10,12 @@ namespace PontoAPonto.Data.Cache
     {
         private readonly ConnectionMultiplexer _redis;
         private readonly IDatabase _database;
+        private readonly RedisConfig _redisConfig;
 
-        public RedisService()
+        public RedisService(RedisConfig redisConfig)
         {
-            var PASSWORD = "0"; // TODO - CHANGE KEY
-            var PORT_NUMBER = "0";
-            var HOST_NAME = "0";
-            _redis = ConnectionMultiplexer.Connect($"{HOST_NAME}:{PORT_NUMBER},password={PASSWORD}");
+            _redisConfig = redisConfig;
+            _redis = ConnectionMultiplexer.Connect($"{_redisConfig.HostName}:{_redisConfig.PortNumber},password={_redisConfig.Password}");
             _database = _redis.GetDatabase();
         }
 
