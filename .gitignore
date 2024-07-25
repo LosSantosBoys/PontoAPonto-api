@@ -484,3 +484,8 @@ $RECYCLE.BIN/
 *.swp
 /PontoAPonto.Api/appsettings.Development.json
 /.editorconfig
+/PontoAPonto.Api/Dockerfile
+/Dockerfile
+/PontoAPonto.Api/fly.toml
+/.github/workflows/fly-deploy.yml
+/fly.toml

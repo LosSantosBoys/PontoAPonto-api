@@ -20,8 +20,6 @@ namespace PontoAPonto.Data.Rest
             _apiKeys = apiKeys;
         }
 
-        //TODO - HANDLE ERRORS ON GOOGLE RESPONSE
-
         public async Task<CustomActionResult<GoogleMapsResponse>> GetRouteAsync(Coordinate start, Coordinate destination, string mode)
         {
             var startLat = ParseCoordinateToString(start.Latitude);

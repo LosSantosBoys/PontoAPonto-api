@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
-using PontoAPonto.Service.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
@@ -19,9 +18,9 @@ namespace PontoAPonto.Api
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+            // Configure Swagger/OpenAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
             {
@@ -53,26 +52,29 @@ namespace PontoAPonto.Api
 
             // Add services
             var configuration = builder.Configuration;
-            builder.Services.AddServices(configuration);
 
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+            // Add database context
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
             builder.Services.AddDbContext<UserContext>(options =>
                 options.UseMySQL(connectionString));
 
-            // Add Singleton appsettings objects
-            // TODO - DESERIALIZE INTO SINGLE OBJECT
-            builder.Services.Configure<KeysConfig>(builder.Configuration.GetSection("ConnectionStrings"));
+            // Configure appsettings objects
+            builder.Services.Configure<KeysConfig>(configuration.GetSection("ConnectionStrings"));
             builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<KeysConfig>>().Value);
-            builder.Services.Configure<EmailConfig>(builder.Configuration.GetSection("EmailConfig"));
+
+            builder.Services.Configure<EmailConfig>(configuration.GetSection("EmailConfig"));
             builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<EmailConfig>>().Value);
-            builder.Services.Configure<JwtConfig>(builder.Configuration.GetSection("Jwt"));
+
+            builder.Services.Configure<JwtConfig>(configuration.GetSection("Jwt"));
             builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<JwtConfig>>().Value);
-            builder.Services.Configure<ApiKeys>(builder.Configuration.GetSection("ApiKeys"));
+
+            builder.Services.Configure<ApiKeys>(configuration.GetSection("ApiKeys"));
             builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<ApiKeys>>().Value);
-            builder.Services.Configure<RedisConfig>(builder.Configuration.GetSection("RedisConfig"));
+
+            builder.Services.Configure<RedisConfig>(configuration.GetSection("RedisConfig"));
             builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<RedisConfig>>().Value);
 
-            // Add services
+            // Configure JWT Authentication
             builder.Services
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -83,10 +85,10 @@ namespace PontoAPonto.Api
                         ValidateAudience = true,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
-                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                        ValidAudience = builder.Configuration["Jwt:Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey
-                        (Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("Null JWT Key in appsettings")))
+                        ValidIssuer = configuration["Jwt:Issuer"],
+                        ValidAudience = configuration["Jwt:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(configuration["Jwt:Key"] ?? throw new InvalidOperationException("Null JWT Key in appsettings")))
                     };
                 });
 
@@ -104,7 +106,7 @@ namespace PontoAPonto.Api
             app.UseHttpsRedirection();
             app.UseRouting();
 
-            app.UseCors(builder => builder //TODO - Define Policy
+            app.UseCors(builder => builder
                 .AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader()
