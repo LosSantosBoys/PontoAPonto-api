@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
-using Microsoft.IdentityModel.Tokens;
 using PontoAPonto.Domain.Dtos.Requests;
 using PontoAPonto.Domain.Dtos.Responses;
 using PontoAPonto.Domain.Interfaces.Repositories;
 using PontoAPonto.Domain.Interfaces.Services;
+using PontoAPonto.Domain.Models;
+using PontoAPonto.Domain.Models.Entities;
 using System.Net;
-using System.Net.Mail;
 using System.Text;
 using static PontoAPonto.Domain.Constant.Constants;
 
@@ -26,21 +26,19 @@ namespace PontoAPonto.Service.Services
             _authService = authService;
         }
 
-        public async Task<BaseResponse<SignUpResponse>> CreateUserSignUpAsync(SignUpRequest request)
+        public async Task<CustomActionResult> AddUserAsync(User user)
         {
-            //TODO: Proper error messages + check for duplicity in email, cpf and phone
-            _authService.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
-            var user = request.ToEntity(passwordHash, passwordSalt);
+            return await _userRepository.AddUserAsync(user);
+        }
 
-            var response = new BaseResponse<SignUpResponse>();
-            var success = await _userRepository.AddUserAsync(user);
+        public async Task<CustomActionResult> ValidateDuplicateUserAsync(string email, string phone, string cpf)
+        {
+            return await _userRepository.ValidateDuplicateUserAsync(email, phone, cpf);
+        }
 
-            if (!success)
-                return response.CreateError(HttpStatusCode.BadRequest, ResponseMessages.ErrorCreatingUserSignUp);
-
-            var body = new StringBuilder().AppendFormat(Email.Html.BodySignUp, user.Name, user.Otp.Password).ToString();
-            await SendEmailAsync(user.Email, Email.SubjectOtp, body);
-            return response.CreateSuccess(HttpStatusCode.Created, ResponseMessages.UserSignUpCreated, new SignUpResponse());
+        public async Task<CustomActionResult> DeleteUserByEmailAsync(string email)
+        {
+            return await _userRepository.DeleteUserByEmailAsync(email);
         }
 
         public async Task<bool> ValidateOtpAsync(ValidateOtpRequest request)
@@ -109,14 +107,14 @@ namespace PontoAPonto.Service.Services
 
             var success = await _userRepository.UpdateUserAsync(user);
 
-            if (success)
+            if (success.Success)
             {
                 var resetUrl = $"api/v1/user/reset-password?token={user.PasswordResetToken}";
                 var body = new StringBuilder().AppendFormat(Email.BodyForgotPassword, resetUrl).ToString();
                 await SendEmailAsync(email, Email.SubjectOtp, body);
             }
 
-            return success;
+            return success.Success;
         }
 
         public async Task<bool> ResetPasswordAsync(string token, ResetPasswordRequest request)
@@ -137,10 +135,9 @@ namespace PontoAPonto.Service.Services
             return true;
         }
 
-        private async Task SendEmailAsync(string email, string subject, string body)
+        private async Task<CustomActionResult> SendEmailAsync(string email, string subject, string body)
         {
-            //TODO: Error messages
-            await _emailService.SendEmailAsync(email, subject, body);
+            return await _emailService.SendEmailAsync(email, subject, body);
         }
     }
 }

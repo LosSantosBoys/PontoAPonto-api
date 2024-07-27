@@ -1,6 +1,4 @@
-﻿using PontoAPonto.Domain.Interfaces.Services;
-
-namespace PontoAPonto.Domain.Constant
+﻿namespace PontoAPonto.Domain.Constant
 {
     public static class Constants
     {
@@ -21,6 +19,12 @@ namespace PontoAPonto.Domain.Constant
 
         public struct Email
         {
+            public struct SmtpServer
+            {
+                public const string Host = "smtp.gmail.com";
+                public const int Port = 587;
+            }
+
             public const string SubjectOtp = "Ponto a Ponto - Código de verificação";
             public const string BodyOtp = "Seu código de verificação: {0}";
             public const string SubjectForgotPassword = "Ponto a Ponto - Recuperação de senha";
@@ -60,9 +64,38 @@ namespace PontoAPonto.Domain.Constant
             }
         }
 
+        #region Errors
         public struct ErrorCodes
         {
             public const string HttpError = "E01";
+
+            public struct Generic
+            {
+                public const string InternalError = "Generic.InternalError";
+            }
+
+            public struct SignUp
+            {
+                public const string DataConflict = "SignUp.DataConflict";
+                public const string UserNotFound = "SignUp.UserNotFound";
+                public const string InvalidDateFormat = "SignUp.InvalidDateFormat";
+            }
         }
+
+        public struct ErrorMessages
+        {
+            public struct Generic
+            {
+                public const string InternalError = "Ops! Encontramos um problema interno. Volte em breve e veremos como podemos te levar aonde você precisa!";
+            }
+
+            public struct SignUp
+            {
+                public const string DataConflict = "Parece que seus dados já existem em nosso sistema. Vamos tentar novamente?";
+                public const string UserNotFound = "Usuário não encontrado.";
+                public const string InvalidDateFormat = "Formato de data inválida. Utilize o formato dd-MM-aaaa.";
+            }
+        }
+        #endregion
     }
 }

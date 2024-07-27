@@ -2,6 +2,7 @@
 using PontoAPonto.Domain.Dtos.Requests;
 using PontoAPonto.Domain.Dtos.Responses;
 using PontoAPonto.Domain.Interfaces.Services;
+using PontoAPonto.Domain.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace PontoAPonto.Api.Controllers
@@ -14,20 +15,6 @@ namespace PontoAPonto.Api.Controllers
         public UserController(IUserService userService)
         {
             _userService = userService;
-        }
-
-        [HttpPost("signup")]
-        [ProducesResponseType(typeof(BaseResponse<SignUpResponse>), StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateUserSignUp(SignUpRequest request)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var response = await _userService.CreateUserSignUpAsync(request);
-            return StatusCode((int)response.StatusCode, response);        
         }
 
         [HttpPatch("signup/otp/validate")]

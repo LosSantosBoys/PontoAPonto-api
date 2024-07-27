@@ -33,6 +33,7 @@ namespace PontoAPonto.Service.Extensions
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IMapsService, MapsService>();
+            services.AddScoped<ISignUpService, SignUpService>();
 
             return services;
         }
