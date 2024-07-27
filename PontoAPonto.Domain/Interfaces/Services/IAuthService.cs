@@ -6,6 +6,5 @@
         bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt);
         string CreateRandomToken();
         string GenerateJwtToken();
-        Task<bool> ValidateJwtTokenAsync(string jwtToken);
     }
 }

@@ -213,7 +213,7 @@ public class MapsService : IMapsService
             return route.Error;
         }
 
-        response = _mapper.Map<Route>(route);
+        response = _mapper.Map<Route>(route.Value);
 
         await _redisService.SetAsync(cacheKey, response, TimeSpan.FromMinutes(30));
 

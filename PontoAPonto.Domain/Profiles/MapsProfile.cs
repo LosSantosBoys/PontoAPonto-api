@@ -11,7 +11,8 @@ namespace PontoAPonto.Domain.Profiles
         {
             CreateMap<GoogleMapsResponse, Route>()
                 .ForMember(dest => dest.Duration, opt => opt.MapFrom(src => src.Routes.FirstOrDefault().Legs.Sum(leg => leg.Duration.Value)))
-                .ForMember(dest => dest.Legs, opt => opt.MapFrom(src => src.Routes.FirstOrDefault().Legs));
+                .ForMember(dest => dest.Legs, opt => opt.MapFrom(src => src.Routes.FirstOrDefault().Legs))
+                .ReverseMap();
 
             CreateMap<GoogleMapsLeg, Leg>()
                 .ForMember(dest => dest.Duration, opt => opt.MapFrom(src => src.Duration.Value))

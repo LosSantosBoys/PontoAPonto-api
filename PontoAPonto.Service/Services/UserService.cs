@@ -101,7 +101,7 @@ namespace PontoAPonto.Service.Services
         {
             var user = await _userRepository.GetUserByEmailAsync(email);
 
-            if (user.PasswordHash.IsNullOrEmpty())
+            if (user.PasswordHash == null)
                 return false;
 
             user.PasswordResetToken = _authService.CreateRandomToken();

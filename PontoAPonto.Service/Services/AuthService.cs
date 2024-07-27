@@ -1,7 +1,7 @@
-﻿using Microsoft.IdentityModel.JsonWebTokens;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using PontoAPonto.Domain.Interfaces.Services;
 using PontoAPonto.Domain.Models.Configs;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -42,45 +42,32 @@ namespace PontoAPonto.Service.Services
 
         public string GenerateJwtToken()
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtConfig.Key));
+            var handler = new JwtSecurityTokenHandler();
 
-            var claims = new Dictionary<string, object>
-            {
-                [ClaimTypes.Role] = "User",
-            };
+            var securityKey = _jwtConfig.Key;
+            var issuer = _jwtConfig.Issuer;
+
+            var privateKey = Encoding.UTF8.GetBytes(securityKey);
+
+            var credentials = new SigningCredentials(
+                        new SymmetricSecurityKey(privateKey),
+                        SecurityAlgorithms.HmacSha256);
+
+            var claim = new ClaimsIdentity();
+            claim.AddClaim(new Claim(ClaimTypes.Role, "USER"));
 
             var descriptor = new SecurityTokenDescriptor
             {
-                Issuer = _jwtConfig.Issuer,
+                SigningCredentials = credentials,
+                Subject = claim,
+                Issuer = issuer,
                 Audience = _jwtConfig.Audience,
-                Claims = claims,
-                IssuedAt = null,
+                IssuedAt = DateTime.UtcNow,
                 NotBefore = DateTime.UtcNow,
-                Expires = DateTime.UtcNow.AddMinutes(180),
-                SigningCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature)
+                Expires = DateTime.UtcNow.AddHours(12),
             };
 
-            var handler = new JsonWebTokenHandler();
-            handler.SetDefaultTimesOnTokenCreation = false;
-            return handler.CreateToken(descriptor);
-        }
-
-        public async Task<bool> ValidateJwtTokenAsync(string jwtToken)
-        {
-            var tokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtConfig.Key)),
-                ValidateIssuer = true,
-                ValidIssuer = _jwtConfig.Issuer,
-                ValidateAudience = true,
-                ValidAudience = _jwtConfig.Audience,
-                ValidateLifetime = true,
-            };
-
-            var handler = new JsonWebTokenHandler();
-            var result = await handler.ValidateTokenAsync(jwtToken, tokenValidationParameters);
-            return result.IsValid;
+            return handler.CreateEncodedJwt(descriptor);
         }
     }
 }

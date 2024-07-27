@@ -13,10 +13,22 @@ namespace PontoAPonto.Domain.Models
 
         public async Task ExecuteResultAsync(ActionContext context)
         {
-            ObjectResult result = new ObjectResult(Success ? (Value) : Error)
+            ObjectResult result;
+
+            if (Success)
             {
-                StatusCode = Success ? (int)StatusCode : ((int?)Error?.StatusCode ?? 400)
-            };
+                result = new ObjectResult(Value)
+                {
+                    StatusCode = (int?)StatusCode ?? 200
+                };
+            }
+            else
+            {
+                result = new ObjectResult(Error)
+                {
+                    StatusCode = (int?)Error?.StatusCode ?? 400
+                };
+            }
 
             await result.ExecuteResultAsync(context);
         }
