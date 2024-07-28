@@ -1,4 +1,5 @@
-﻿using PontoAPonto.Domain.Models.Entities;
+﻿using PontoAPonto.Domain.Enums;
+using PontoAPonto.Domain.Models.Entities;
 using System.ComponentModel.DataAnnotations;
 
 namespace PontoAPonto.Domain.Dtos.Requests.SignUp

@@ -1,6 +1,8 @@
 ﻿using System.Net;
 using System.Text;
+using PontoAPonto.Domain.Dtos.Requests;
 using PontoAPonto.Domain.Dtos.Requests.SignUp;
+using PontoAPonto.Domain.Enums;
 using PontoAPonto.Domain.Errors;
 using PontoAPonto.Domain.Helpers;
 using PontoAPonto.Domain.Interfaces.Services;
@@ -84,6 +86,58 @@ namespace PontoAPonto.Service.Services
             }
 
             return new CustomActionResult(HttpStatusCode.Created);
+        }
+
+        public async Task<CustomActionResult> ValidateDriverOtpAsync(ValidateOtpRequest request)
+        {
+            var driverResult = await _driverService.GetDriverByEmailAsync(request.Email);
+
+            if (!driverResult.Success)
+            {
+                return driverResult.Error;
+            }
+
+            var isValid = driverResult.Value.ValidateOtp(request.Otp);
+
+            if (!isValid)
+            {
+                return SignUpError.InvalidOtp();
+            }
+
+            var updateResult = await _driverService.UpdateDriverAsync(driverResult);
+
+            if (!updateResult.Success)
+            {
+                return updateResult.Error;
+            }
+
+            return CustomActionResult.NoContent();
+        }
+
+        public async Task<CustomActionResult> ValidateUserOtpAsync(ValidateOtpRequest request)
+        {
+            var userResult = await _userService.GetUserByEmailAsync(request.Email);
+
+            if (!userResult.Success)
+            {
+                return userResult.Error;
+            }
+
+            var isValid = userResult.Value.ValidateOtp(request.Otp);
+
+            if (!isValid)
+            {
+                return SignUpError.InvalidOtp();
+            }
+
+            var updateResult = await _userService.UpdateUserAsync(userResult);
+
+            if (!updateResult.Success)
+            {
+                return updateResult.Error;
+            }
+
+            return CustomActionResult.NoContent();
         }
 
         private async Task<(CustomActionResult result, DateTime parsedDate)> ValidateRequestAsync(SignUpRequest request)

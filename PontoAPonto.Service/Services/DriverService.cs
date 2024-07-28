@@ -23,5 +23,15 @@ namespace PontoAPonto.Service.Services
         {
             return await _driverRepository.DeleteDriverByEmailAsync(email);
         }
+
+        public async Task<CustomActionResult<Driver>> GetDriverByEmailAsync(string email)
+        {
+            return await _driverRepository.GetDriverByEmailAsync(email);
+        }
+
+        public async Task<CustomActionResult> UpdateDriverAsync(Driver driver)
+        {
+            return await _driverRepository.UpdateDriverAsync(driver);
+        }
     }
 }

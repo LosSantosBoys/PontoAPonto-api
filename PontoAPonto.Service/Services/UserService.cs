@@ -41,16 +41,14 @@ namespace PontoAPonto.Service.Services
             return await _userRepository.DeleteUserByEmailAsync(email);
         }
 
-        public async Task<bool> ValidateOtpAsync(ValidateOtpRequest request)
+        public async Task<CustomActionResult<User>> GetUserByEmailAsync(string email)
         {
-            //TODO: Error messages for expiracy, invalid code, db error, etc
-            var user = await _userRepository.GetUserByEmailAsync(request.Email);
+            return await _userRepository.GetUserByEmailAsync(email);
+        }
 
-            var isValid = user.ValidateOtp(request.Otp);
-
-            await _userRepository.UpdateUserAsync(user);
-
-            return isValid;
+        public async Task<CustomActionResult> UpdateUserAsync(User user)
+        {
+            return await _userRepository.UpdateUserAsync(user);
         }
 
         public async Task<bool> GenerateNewOtpAsync(string email)
@@ -58,7 +56,7 @@ namespace PontoAPonto.Service.Services
             //TODO: Error messages
             var user = await _userRepository.GetUserByEmailAsync(email);
 
-            var success = user.GenerateNewOtp();
+            var success = user.Value.GenerateNewOtp();
 
             await _userRepository.UpdateUserAsync(user);
 
@@ -77,7 +75,7 @@ namespace PontoAPonto.Service.Services
             var response = new BaseResponse<SignInResponse>();
             var user = await _userRepository.GetUserByEmailAsync(request.Email);
 
-            var passwordMatch = user.VerifyPasswordHash(request.Password);
+            var passwordMatch = user.Value.VerifyPasswordHash(request.Password);
 
             if (!passwordMatch)
                 return response.CreateError(HttpStatusCode.BadRequest, ResponseMessages.SignInError);
@@ -86,9 +84,9 @@ namespace PontoAPonto.Service.Services
 
             var responseData = new SignInResponse { TokenType = "Bearer", Token = token, IsFirstAccess = user.IsFirstAccess };
 
-            if (user.IsFirstAccess)
+            if (user.Value.IsFirstAccess)
             {
-                user.IsFirstAccess = false;
+                user.Value.IsFirstAccess = false;
                 await _userRepository.UpdateUserAsync(user);
             }
 
@@ -99,11 +97,11 @@ namespace PontoAPonto.Service.Services
         {
             var user = await _userRepository.GetUserByEmailAsync(email);
 
-            if (user.PasswordHash == null)
+            if (user.Value.PasswordHash == null)
                 return false;
 
-            user.PasswordResetToken = _authService.CreateRandomToken();
-            user.ResetTokenExpiracy = DateTime.Now.AddMinutes(30);
+            user.Value.PasswordResetToken = _authService.CreateRandomToken();
+            user.Value.ResetTokenExpiracy = DateTime.Now.AddMinutes(30);
 
             var success = await _userRepository.UpdateUserAsync(user);
 

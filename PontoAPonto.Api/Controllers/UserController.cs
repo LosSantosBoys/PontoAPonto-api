@@ -16,21 +16,6 @@ namespace PontoAPonto.Api.Controllers
             _userService = userService;
         }
 
-        [HttpPatch("signup/otp/validate")]
-        [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> ValidateOtp(ValidateOtpRequest request)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var response = await _userService.ValidateOtpAsync(request);
-
-            return Ok(response);
-        }
-
         [HttpPatch("signup/otp/new")]
         [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

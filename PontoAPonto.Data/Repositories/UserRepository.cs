@@ -60,7 +60,7 @@ namespace PontoAPonto.Data.Repositories
         {
             try
             {
-                _userContext.Update(user);
+                _userContext.Users.Update(user);
 
                 if (await _userContext.SaveChangesAsync() == 0)
                 {
@@ -75,9 +75,16 @@ namespace PontoAPonto.Data.Repositories
             }
         }
 
-        public async Task<User> GetUserByEmailAsync(string email)
+        public async Task<CustomActionResult<User>> GetUserByEmailAsync(string email)
         {
-            return await _userContext.Users.FirstAsync(x => x.Email == email);
+            var user = await _userContext.Users.FirstAsync(x => x.Email == email);
+
+            if (user == null)
+            {
+                return SignUpError.UserNotFound();
+            }
+
+            return user;
         }
 
         public async Task<User> GetUserByTokenAsync(string token)

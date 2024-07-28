@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PontoAPonto.Domain.Dtos.Requests;
 using PontoAPonto.Domain.Dtos.Requests.SignUp;
 using PontoAPonto.Domain.Dtos.Responses;
-using PontoAPonto.Domain.Interfaces.Services;
+using PontoAPonto.Domain.Enums;
+using PontoAPonto.Domain.Interfaces.UseCase;
 using PontoAPonto.Domain.Models;
 
 namespace PontoAPonto.Api.Controllers
@@ -10,11 +12,11 @@ namespace PontoAPonto.Api.Controllers
     [Route("api/v1/signup")]
     public class SignUpController : ControllerBase
     {
-        private readonly ISignUpService _signUpService;
+        private readonly ISignUpUseCase _signupUseCase;
 
-        public SignUpController(ISignUpService signUpService)
+        public SignUpController(ISignUpUseCase signupUseCase)
         {
-            _signUpService = signUpService;
+            _signupUseCase = signupUseCase;
         }
 
         [HttpPost("user")]
@@ -22,7 +24,7 @@ namespace PontoAPonto.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<CustomActionResult> CreateUserSignUp(SignUpRequest request)
         {
-            return await _signUpService.CreateUserSignUpAsync(request);
+            return await _signupUseCase.CreateSignUpAsync(request, UserType.USER);
         }
 
         [HttpPost("driver")]
@@ -30,7 +32,22 @@ namespace PontoAPonto.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<CustomActionResult> CreateDriverSignUp(SignUpRequest request)
         {
-            return await _signUpService.CreateDriverSignUpAsync(request);
+            return await _signupUseCase.CreateSignUpAsync(request, UserType.DRIVER);
+        }
+
+        [HttpPatch("otp/validate")]
+        [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ValidateOtp(ValidateOtpRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var response = await _signupUseCase.ValidateOtpAsync(request);
+
+            return Ok(response);
         }
     }
 }

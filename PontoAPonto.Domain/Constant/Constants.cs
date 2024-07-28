@@ -79,6 +79,7 @@
                 public const string DataConflict = "SignUp.DataConflict";
                 public const string UserNotFound = "SignUp.UserNotFound";
                 public const string InvalidDateFormat = "SignUp.InvalidDateFormat";
+                public const string InvalidOtp = "SignUp.InvalidOtp";
             }
         }
 
@@ -94,6 +95,7 @@
                 public const string DataConflict = "Parece que seus dados já existem em nosso sistema. Vamos tentar novamente?";
                 public const string UserNotFound = "Usuário não encontrado.";
                 public const string InvalidDateFormat = "Formato de data inválida. Utilize o formato dd-MM-aaaa.";
+                public const string InvalidOtp = "Parece que seu código é inválido. Gere um novo e tente novamente!";
             }
         }
         #endregion

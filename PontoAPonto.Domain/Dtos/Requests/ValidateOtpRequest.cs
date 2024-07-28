@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using PontoAPonto.Domain.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace PontoAPonto.Domain.Dtos.Requests
 {
@@ -9,5 +10,8 @@ namespace PontoAPonto.Domain.Dtos.Requests
 
         [Required]
         public int Otp { get; set; }
+
+        [Required]
+        public UserType UserType { get; set; }
     }
 }

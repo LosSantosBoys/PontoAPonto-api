@@ -7,5 +7,7 @@ namespace PontoAPonto.Domain.Interfaces.Repositories
     {
         Task<CustomActionResult> AddDriverAsync(Driver driver);
         Task<CustomActionResult> DeleteDriverByEmailAsync(string email);
+        Task<CustomActionResult<Driver>> GetDriverByEmailAsync(string email);
+        Task<CustomActionResult> UpdateDriverAsync(Driver driver);
     }
 }
