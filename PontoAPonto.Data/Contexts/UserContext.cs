@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PontoAPonto.Domain.Interfaces.Config;
 using PontoAPonto.Domain.Models.Configs;
 using PontoAPonto.Domain.Models.Entities;
 
@@ -25,31 +26,20 @@ namespace PontoAPonto.Data.Contexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>(entity =>
+            var typesToRegister = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes())
+                .Where(x => typeof(IEntityConfig).IsAssignableFrom(x) && !x.IsAbstract).ToList();
+
+            foreach (var type in typesToRegister)
             {
-                entity.ToTable("Users");
+                if (type == null)
+                {
+                    throw new ArgumentNullException(nameof(type));
+                }
 
-                entity.HasKey(u => u.Id);
-
-                entity.Property(u => u.Name)
-                    .IsRequired()
-                    .HasMaxLength(255);
-
-                entity.HasIndex(u => u.Email)
-                    .IsUnique();
-
-                entity.HasIndex(u => u.Phone)
-                    .IsUnique();
-
-                entity.HasIndex(u => u.Cpf)
-                    .IsUnique();
-
-                entity.OwnsOne(u => u.Otp,
-                    optBuilder =>
-                    {
-                        optBuilder.ToTable("Users");
-                    });
-            });
+                dynamic configurationInstance = Activator.CreateInstance(type)
+                    ?? throw new InvalidOperationException($"Cannot create an instance of type {type.FullName}");
+                modelBuilder.ApplyConfiguration(configurationInstance);
+            }
         }
     }
 }
