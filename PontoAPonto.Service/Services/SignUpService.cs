@@ -5,7 +5,6 @@ using PontoAPonto.Domain.Errors;
 using PontoAPonto.Domain.Helpers;
 using PontoAPonto.Domain.Interfaces.Services;
 using PontoAPonto.Domain.Models;
-using PontoAPonto.Domain.Models.Entities;
 using static PontoAPonto.Domain.Constant.Constants;
 
 namespace PontoAPonto.Service.Services
@@ -15,12 +14,14 @@ namespace PontoAPonto.Service.Services
         private readonly IUserService _userService;
         private readonly IAuthService _authService;
         private readonly IEmailService _emailService;
+        private readonly IDriverService _driverService;
 
-        public SignUpService(IUserService userService, IAuthService authService, IEmailService emailService)
+        public SignUpService(IUserService userService, IAuthService authService, IEmailService emailService, IDriverService driverService)
         {
             _userService = userService;
             _authService = authService;
             _emailService = emailService;
+            _driverService = driverService;
         }
 
         public async Task<CustomActionResult> CreateUserSignUpAsync(SignUpRequest request)
@@ -65,7 +66,7 @@ namespace PontoAPonto.Service.Services
 
             _authService.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
-            var driver = request.ToEntity(passwordHash, passwordSalt, validateRequest.parsedDate);
+            var driver = request.ToDriverEntity(passwordHash, passwordSalt, validateRequest.parsedDate);
 
             var resultAddDriver = await _driverService.AddDriverAsync(driver);
 

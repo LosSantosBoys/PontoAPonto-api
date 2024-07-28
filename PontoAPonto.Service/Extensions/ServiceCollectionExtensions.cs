@@ -26,12 +26,14 @@ namespace PontoAPonto.Service.Extensions
             //Repositories
             services.AddDbContext<UserContext>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IDriverRepository, DriverRepository>();
             services.AddScoped<IGasPriceScrapper, GasPriceScrapper>();
             services.AddScoped<IMapsApi, MapsApi>();
 
             //Services
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IDriverService, DriverService>();
             services.AddScoped<IMapsService, MapsService>();
             services.AddScoped<ISignUpService, SignUpService>();
 

@@ -10,6 +10,7 @@ namespace PontoAPonto.Data.Contexts
         private readonly KeysConfig _keyConfig;
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Driver> Drivers { get; set; }
 
         public UserContext(DbContextOptions<UserContext> opt, KeysConfig keyConfig) : base(opt)
         {

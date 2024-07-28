@@ -2,7 +2,6 @@
 using PontoAPonto.Domain.Dtos.Requests;
 using PontoAPonto.Domain.Dtos.Responses;
 using PontoAPonto.Domain.Interfaces.Services;
-using PontoAPonto.Domain.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace PontoAPonto.Api.Controllers
