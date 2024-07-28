@@ -2,11 +2,11 @@
 using System.Text;
 using PontoAPonto.Domain.Dtos.Requests;
 using PontoAPonto.Domain.Dtos.Requests.SignUp;
-using PontoAPonto.Domain.Enums;
 using PontoAPonto.Domain.Errors;
 using PontoAPonto.Domain.Helpers;
 using PontoAPonto.Domain.Interfaces.Services;
 using PontoAPonto.Domain.Models;
+using PontoAPonto.Domain.Models.Entities;
 using static PontoAPonto.Domain.Constant.Constants;
 
 namespace PontoAPonto.Service.Services
@@ -111,7 +111,7 @@ namespace PontoAPonto.Service.Services
                 return updateResult.Error;
             }
 
-            return CustomActionResult.NoContent();
+            return new CustomActionResult(HttpStatusCode.OK);
         }
 
         public async Task<CustomActionResult> ValidateUserOtpAsync(ValidateOtpRequest request)
@@ -137,7 +137,7 @@ namespace PontoAPonto.Service.Services
                 return updateResult.Error;
             }
 
-            return CustomActionResult.NoContent();
+            return new CustomActionResult(HttpStatusCode.OK);
         }
 
         private async Task<(CustomActionResult result, DateTime parsedDate)> ValidateRequestAsync(SignUpRequest request)
@@ -162,8 +162,69 @@ namespace PontoAPonto.Service.Services
         private async Task<CustomActionResult> SendSignUpEmailAsync(string name, string email, int otpPassword)
         {
             var body = new StringBuilder().AppendFormat(Email.Html.BodySignUp, name, otpPassword).ToString();
-            var resultSendEmail = await _emailService.SendEmailAsync(email, Email.SubjectOtp, body);
-            return resultSendEmail;
+            return await _emailService.SendEmailAsync(email, Email.SubjectOtp, body);
+        }
+
+        public async Task<CustomActionResult> CreateNewUserOtpAsync(string email)
+        {
+            var userResult = await _userService.GetUserByEmailAsync(email);
+
+            if (!userResult.Success)
+            {
+                return userResult.Error;
+            }
+
+            var generateOtp = userResult.Value.GenerateNewOtp();
+
+            var updateResult = await _userService.UpdateUserAsync(userResult.Value);
+
+            if (!updateResult.Success)
+            {
+                return updateResult.Error;
+            }
+
+            var emailResult = await SendNewOtpEmailAsync(email, userResult.Value.Otp.Password);
+
+            if (!emailResult.Success)
+            {
+                return emailResult.Error;
+            }
+
+            return new CustomActionResult(HttpStatusCode.OK);
+        }
+
+        public async Task<CustomActionResult> CreateNewDriverOtpAsync(string email)
+        {
+            var driverResult = await _driverService.GetDriverByEmailAsync(email);
+
+            if (!driverResult.Success)
+            {
+                return driverResult.Error;
+            }
+
+            var generateOtp = driverResult.Value.GenerateNewOtp();
+
+            var updateResult = await _userService.UpdateUserAsync(driverResult.Value);
+
+            if (!updateResult.Success)
+            {
+                return updateResult.Error;
+            }
+
+            var emailResult = await SendNewOtpEmailAsync(email, driverResult.Value.Otp.Password);
+
+            if (!emailResult.Success)
+            {
+                return emailResult.Error;
+            }
+
+            return new CustomActionResult(HttpStatusCode.OK);
+        }
+
+        private async Task<CustomActionResult> SendNewOtpEmailAsync(string email, int otpCode)
+        {
+            var body = new StringBuilder().AppendFormat(Email.BodyOtp, otpCode).ToString();
+            return await _emailService.SendEmailAsync(email, Email.SubjectOtp, body);
         }
     }
 }

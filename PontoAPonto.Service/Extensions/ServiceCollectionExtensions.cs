@@ -11,6 +11,8 @@ using PontoAPonto.Data.Rest;
 using PontoAPonto.Domain.Interfaces.WebScrapper;
 using PontoAPonto.Data.WebScrapper;
 using PontoAPonto.Data.Cache;
+using PontoAPonto.Domain.Interfaces.UseCase;
+using PontoAPonto.Service.UseCases;
 
 namespace PontoAPonto.Service.Extensions
 {
@@ -36,6 +38,9 @@ namespace PontoAPonto.Service.Extensions
             services.AddScoped<IDriverService, DriverService>();
             services.AddScoped<IMapsService, MapsService>();
             services.AddScoped<ISignUpService, SignUpService>();
+
+            //UseCases
+            services.AddScoped<ISignUpUseCase, SignUpUseCase>();
 
             return services;
         }

@@ -12,7 +12,6 @@ namespace PontoAPonto.Domain.Interfaces.Services
         Task<CustomActionResult> DeleteUserByEmailAsync(string email);
         Task<CustomActionResult<User>> GetUserByEmailAsync(string email);
         Task<CustomActionResult> UpdateUserAsync(User user);
-        Task<bool> GenerateNewOtpAsync(string email);
         Task<BaseResponse<SignInResponse>> SignInAsync(SignInRequest request);
         Task<bool> ForgotPasswordAsync(string email);
         Task<bool> ResetPasswordAsync(string token, ResetPasswordRequest request);

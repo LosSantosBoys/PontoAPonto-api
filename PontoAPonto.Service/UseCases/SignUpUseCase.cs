@@ -35,5 +35,15 @@ namespace PontoAPonto.Service.UseCases
 
             return await _signUpService.ValidateDriverOtpAsync(request);
         }
+
+        public async Task<CustomActionResult> CreateNewOtpAsync(CreateNewOtpRequest request)
+        {
+            if (request.UserType == UserType.USER)
+            {
+                return await _signUpService.CreateNewUserOtpAsync(request.Email);
+            }
+
+            return await _signUpService.CreateNewDriverOtpAsync(request.Email);
+        }
     }
 }

@@ -15,12 +15,12 @@
         public int Attempts { get; private set; }
         public bool IsVerified { get; private set; }
 
-        public bool SendOtp(int password)
+        public bool SendOtp(int otpCode)
         {
             if (IsVerified || Attempts >= maxAttempts)
                 return false;
 
-            if (DateTime.Now > Expiracy || Password != password)
+            if (DateTime.Now > Expiracy || Password != otpCode)
             {
                 Attempts++;
                 return false;

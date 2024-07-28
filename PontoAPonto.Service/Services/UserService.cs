@@ -51,24 +51,6 @@ namespace PontoAPonto.Service.Services
             return await _userRepository.UpdateUserAsync(user);
         }
 
-        public async Task<bool> GenerateNewOtpAsync(string email)
-        {
-            //TODO: Error messages
-            var user = await _userRepository.GetUserByEmailAsync(email);
-
-            var success = user.Value.GenerateNewOtp();
-
-            await _userRepository.UpdateUserAsync(user);
-
-            if (success)
-            {
-                var body = new StringBuilder().AppendFormat(Email.BodyOtp, user.Otp.Password).ToString();
-                await SendEmailAsync(email, Email.SubjectOtp, body);
-            }
-
-            return success;
-        }
-
         public async Task<BaseResponse<SignInResponse>> SignInAsync(SignInRequest request)
         {
             //TODO: Error messages
@@ -82,7 +64,7 @@ namespace PontoAPonto.Service.Services
 
             var token = _authService.GenerateJwtToken();
 
-            var responseData = new SignInResponse { TokenType = "Bearer", Token = token, IsFirstAccess = user.IsFirstAccess };
+            var responseData = new SignInResponse { TokenType = "Bearer", Token = token, IsFirstAccess = user.Value.IsFirstAccess };
 
             if (user.Value.IsFirstAccess)
             {
@@ -107,7 +89,7 @@ namespace PontoAPonto.Service.Services
 
             if (success.Success)
             {
-                var resetUrl = $"api/v1/user/reset-password?token={user.PasswordResetToken}";
+                var resetUrl = $"api/v1/user/reset-password?token={user.Value.PasswordResetToken}";
                 var body = new StringBuilder().AppendFormat(Email.BodyForgotPassword, resetUrl).ToString();
                 await SendEmailAsync(email, Email.SubjectOtp, body);
             }

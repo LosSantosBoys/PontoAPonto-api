@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PontoAPonto.Domain.Dtos.Requests;
 using PontoAPonto.Domain.Dtos.Requests.SignUp;
-using PontoAPonto.Domain.Dtos.Responses;
 using PontoAPonto.Domain.Enums;
 using PontoAPonto.Domain.Interfaces.UseCase;
 using PontoAPonto.Domain.Models;
@@ -20,34 +19,39 @@ namespace PontoAPonto.Api.Controllers
         }
 
         [HttpPost("user")]
-        [ProducesResponseType(typeof(BaseResponse<SignUpResponse>), StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<CustomActionResult> CreateUserSignUp(SignUpRequest request)
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(CustomError), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(CustomError), StatusCodes.Status500InternalServerError)]
+        public async Task<CustomActionResult> CreateUserSignUp([FromBody] SignUpRequest request)
         {
             return await _signupUseCase.CreateSignUpAsync(request, UserType.USER);
         }
 
         [HttpPost("driver")]
-        [ProducesResponseType(typeof(BaseResponse<SignUpResponse>), StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<CustomActionResult> CreateDriverSignUp(SignUpRequest request)
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(CustomError), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(CustomError), StatusCodes.Status500InternalServerError)]
+        public async Task<CustomActionResult> CreateDriverSignUp([FromBody] SignUpRequest request)
         {
             return await _signupUseCase.CreateSignUpAsync(request, UserType.DRIVER);
         }
 
         [HttpPatch("otp/validate")]
-        [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> ValidateOtp(ValidateOtpRequest request)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CustomError), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(CustomError), StatusCodes.Status500InternalServerError)]
+        public async Task<CustomActionResult> ValidateOtp([FromBody] ValidateOtpRequest request)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            return await _signupUseCase.ValidateOtpAsync(request);
+        }
 
-            var response = await _signupUseCase.ValidateOtpAsync(request);
-
-            return Ok(response);
+        [HttpPatch("otp/new")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CustomError), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(CustomError), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CreateNewOtp([FromBody] CreateNewOtpRequest request)
+        {
+            return await _signupUseCase.CreateNewOtpAsync(request);
         }
     }
 }

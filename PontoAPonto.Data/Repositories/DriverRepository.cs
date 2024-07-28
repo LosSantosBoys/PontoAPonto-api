@@ -56,7 +56,7 @@ namespace PontoAPonto.Data.Repositories
             }
         }
 
-        public async Task<CustomActionResult<User>> GetDriverByEmailAsync(string email)
+        public async Task<CustomActionResult<Driver>> GetDriverByEmailAsync(string email)
         {
             var driver = await _userContext.Drivers.FirstAsync(x => x.Email == email);
 

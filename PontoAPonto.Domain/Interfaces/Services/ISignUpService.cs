@@ -10,5 +10,7 @@ namespace PontoAPonto.Domain.Interfaces.Services
         Task<CustomActionResult> CreateDriverSignUpAsync(SignUpRequest request);
         Task<CustomActionResult> ValidateDriverOtpAsync(ValidateOtpRequest request);
         Task<CustomActionResult> ValidateUserOtpAsync(ValidateOtpRequest request);
+        Task<CustomActionResult> CreateNewUserOtpAsync(string email);
+        Task<CustomActionResult> CreateNewDriverOtpAsync(string email);
     }
 }

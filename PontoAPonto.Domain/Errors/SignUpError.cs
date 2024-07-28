@@ -14,7 +14,7 @@ namespace PontoAPonto.Domain.Errors
             HttpStatusCode.InternalServerError, ErrorCodes.Generic.InternalError, ErrorMessages.Generic.InternalError);
 
         public static CustomError UserNotFound() => new CustomError(
-            HttpStatusCode.NoContent, ErrorCodes.SignUp.UserNotFound, ErrorMessages.SignUp.UserNotFound);
+            HttpStatusCode.BadRequest, ErrorCodes.SignUp.UserNotFound, ErrorMessages.SignUp.UserNotFound);
 
         public static CustomError InvalidDateFormat() => new CustomError(
             HttpStatusCode.BadRequest, ErrorCodes.SignUp.InvalidDateFormat, ErrorMessages.SignUp.InvalidDateFormat);
