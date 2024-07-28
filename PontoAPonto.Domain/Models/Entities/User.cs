@@ -8,25 +8,25 @@ namespace PontoAPonto.Domain.Models.Entities
     public class User : EntityBase
     {
         [MaxLength(255)]
-        public string Name { get; private set; }
+        public string Name { get; protected set; }
 
         [MaxLength(255)]
-        public string Email { get; private set; }
+        public string Email { get; protected set; }
 
         [MaxLength(13)]
-        public string Phone { get; private set; }
-        public Otp Otp { get; private set; }
+        public string Phone { get; protected set; }
+        public Otp Otp { get; protected set; }
         public bool IsFirstAccess { get; set; }
 
         [MaxLength(255)]
-        public string Status { get; private set; }
-        public byte[]? PasswordHash { get; private set; }
-        public byte[]? PasswordSalt { get; private set; }
+        public string Status { get; protected set; }
+        public byte[]? PasswordHash { get; protected set; }
+        public byte[]? PasswordSalt { get; protected set; }
         public string? PasswordResetToken { get; set; }
         public DateTime? ResetTokenExpiracy { get; set; }
         [MaxLength(11)]
-        public string? Cpf { get; private set; }
-        public DateTime? Birthday {  get; private set; }
+        public string? Cpf { get; protected set; }
+        public DateTime? Birthday {  get; protected set; }
 
         public User CreateUser(string name, string email, string phone, byte[] passwordHash, byte[] passwordSalt, string cpf, DateTime birthday)
         {

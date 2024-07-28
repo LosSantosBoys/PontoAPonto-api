@@ -1,7 +1,7 @@
 ﻿using PontoAPonto.Domain.Models.Entities;
 using System.ComponentModel.DataAnnotations;
 
-namespace PontoAPonto.Domain.Dtos.Requests
+namespace PontoAPonto.Domain.Dtos.Requests.SignUp
 {
     public class SignUpRequest
     {
@@ -15,7 +15,7 @@ namespace PontoAPonto.Domain.Dtos.Requests
 
         [Required]
         [MaxLength(13)]
-        public string Phone {  get; set; }
+        public string Phone { get; set; }
 
         [Required]
         public string Password { get; set; }
@@ -31,6 +31,11 @@ namespace PontoAPonto.Domain.Dtos.Requests
         public User ToEntity(byte[] passwordHash, byte[] passwordSalt, DateTime birthdayDate)
         {
             return new User().CreateUser(Name, Email, Phone, passwordHash, passwordSalt, Cpf, birthdayDate);
+        }
+
+        public Driver ToDriverEntity(byte[] passwordHash, byte[] passwordSalt, DateTime birthdayDate)
+        {
+            return Driver.CreateUser(Name, Email, Phone, passwordHash, passwordSalt, Cpf, birthdayDate);
         }
     }
 }
