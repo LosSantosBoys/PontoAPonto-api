@@ -38,9 +38,11 @@ namespace PontoAPonto.Service.Extensions
             services.AddScoped<IDriverService, DriverService>();
             services.AddScoped<IMapsService, MapsService>();
             services.AddScoped<ISignUpService, SignUpService>();
+            services.AddScoped<ISignInService, SignInService>();
 
             //UseCases
             services.AddScoped<ISignUpUseCase, SignUpUseCase>();
+            services.AddScoped<ISignInUseCase, SignInUseCase>();
 
             return services;
         }

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PontoAPonto.Data.Contexts;
-using PontoAPonto.Domain.Errors;
+using PontoAPonto.Domain.Errors.Business;
 using PontoAPonto.Domain.Interfaces.Repositories;
 using PontoAPonto.Domain.Models;
 using PontoAPonto.Domain.Models.Entities;

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PontoAPonto.Data.Contexts;
-using PontoAPonto.Domain.Errors;
+using PontoAPonto.Domain.Errors.Business;
+using PontoAPonto.Domain.Errors.Database;
 using PontoAPonto.Domain.Interfaces.Repositories;
 using PontoAPonto.Domain.Models;
 using PontoAPonto.Domain.Models.Entities;
@@ -81,7 +82,7 @@ namespace PontoAPonto.Data.Repositories
 
             if (user == null)
             {
-                return SignUpError.UserNotFound();
+                return UserRepositoryError.UserNotFound();
             }
 
             return user;
@@ -102,7 +103,7 @@ namespace PontoAPonto.Data.Repositories
 
                 if (rowsAffected == 0)
                 {
-                    return SignUpError.UserNotFound();
+                    return UserRepositoryError.UserNotFound();
                 }
 
                 return CustomActionResult.NoContent();

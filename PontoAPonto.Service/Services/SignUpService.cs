@@ -2,7 +2,7 @@
 using System.Text;
 using PontoAPonto.Domain.Dtos.Requests;
 using PontoAPonto.Domain.Dtos.Requests.SignUp;
-using PontoAPonto.Domain.Errors;
+using PontoAPonto.Domain.Errors.Business;
 using PontoAPonto.Domain.Helpers;
 using PontoAPonto.Domain.Interfaces.Services;
 using PontoAPonto.Domain.Models;

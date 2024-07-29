@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
 using PontoAPonto.Domain.Dtos.Requests;
-using PontoAPonto.Domain.Dtos.Responses;
 using PontoAPonto.Domain.Interfaces.Repositories;
 using PontoAPonto.Domain.Interfaces.Services;
 using PontoAPonto.Domain.Models;
 using PontoAPonto.Domain.Models.Entities;
-using System.Net;
 using System.Text;
 using static PontoAPonto.Domain.Constant.Constants;
 
@@ -49,30 +47,6 @@ namespace PontoAPonto.Service.Services
         public async Task<CustomActionResult> UpdateUserAsync(User user)
         {
             return await _userRepository.UpdateUserAsync(user);
-        }
-
-        public async Task<BaseResponse<SignInResponse>> SignInAsync(SignInRequest request)
-        {
-            //TODO: Error messages
-            var response = new BaseResponse<SignInResponse>();
-            var user = await _userRepository.GetUserByEmailAsync(request.Email);
-
-            var passwordMatch = user.Value.VerifyPasswordHash(request.Password);
-
-            if (!passwordMatch)
-                return response.CreateError(HttpStatusCode.BadRequest, ResponseMessages.SignInError);
-
-            var token = _authService.GenerateJwtToken();
-
-            var responseData = new SignInResponse { TokenType = "Bearer", Token = token, IsFirstAccess = user.Value.IsFirstAccess };
-
-            if (user.Value.IsFirstAccess)
-            {
-                user.Value.IsFirstAccess = false;
-                await _userRepository.UpdateUserAsync(user);
-            }
-
-            return response.CreateSuccess(HttpStatusCode.Created, ResponseMessages.SignInSuccess, responseData);
         }
 
         public async Task<bool> ForgotPasswordAsync(string email)

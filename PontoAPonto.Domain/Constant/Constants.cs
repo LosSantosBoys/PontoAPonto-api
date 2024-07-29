@@ -72,14 +72,26 @@
             public struct Generic
             {
                 public const string InternalError = "Generic.InternalError";
+
+                public struct Database
+                {
+                    public const string EntityNotFound = "{0}.NotFound";
+                }
             }
 
-            public struct SignUp
+            public struct Business
             {
-                public const string DataConflict = "SignUp.DataConflict";
-                public const string UserNotFound = "SignUp.UserNotFound";
-                public const string InvalidDateFormat = "SignUp.InvalidDateFormat";
-                public const string InvalidOtp = "SignUp.InvalidOtp";
+                public struct SignUp
+                {
+                    public const string DataConflict = "SignUp.DataConflict";
+                    public const string InvalidDateFormat = "SignUp.InvalidDateFormat";
+                    public const string InvalidOtp = "SignUp.InvalidOtp";
+                }
+
+                public struct SignIn
+                {
+                    public const string InvalidSignIn = "SignIn.InvalidSignIn";
+                }
             }
         }
 
@@ -88,14 +100,26 @@
             public struct Generic
             {
                 public const string InternalError = "Ops! Encontramos um problema interno. Volte em breve e veremos como podemos te levar aonde você precisa!";
+
+                public struct Database
+                {
+                    public const string EntityNotFound = "{0} solicitado não encontrado.";
+                }
             }
 
-            public struct SignUp
+            public struct Business
             {
-                public const string DataConflict = "Parece que seus dados já existem em nosso sistema. Vamos tentar novamente?";
-                public const string UserNotFound = "Usuário não encontrado.";
-                public const string InvalidDateFormat = "Formato de data inválida. Utilize o formato dd-MM-aaaa.";
-                public const string InvalidOtp = "Parece que seu código é inválido. Gere um novo e tente novamente!";
+                public struct SignUp
+                {
+                    public const string DataConflict = "Parece que seus dados já existem em nosso sistema. Vamos tentar novamente?";
+                    public const string InvalidDateFormat = "Formato de data inválida. Utilize o formato dd-MM-aaaa.";
+                    public const string InvalidOtp = "Parece que seu código é inválido. Gere um novo e tente novamente!";
+                }
+
+                public struct SignIn
+                {
+                    public const string InvalidSignIn = "Seus dados estão incorretos. Verifique se digitou corretamente seu e-mail e preste atenção nas letras maiúsculas em sua senha.";
+                }
             }
         }
         #endregion
