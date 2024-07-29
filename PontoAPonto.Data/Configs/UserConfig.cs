@@ -46,6 +46,8 @@ namespace PontoAPonto.Data.Configs
 
             builder.Property(x => x.Birthday)
                 .IsRequired();
+
+            builder.Property(x => x.Reputation).IsRequired();
         }
     }
 }

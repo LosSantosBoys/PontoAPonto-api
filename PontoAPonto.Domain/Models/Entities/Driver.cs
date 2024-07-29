@@ -4,6 +4,11 @@ namespace PontoAPonto.Domain.Models.Entities
 {
     public class Driver : User
     {
+        public string? UrlProfilePicture { get; private set; }
+        public string? UrlCnhPicture { get; private set; }
+        public bool Approved { get; private set; }
+        public DateTime ApprovedAt { get; private set; }
+
         public static new Driver CreateUser(string name, string email, string phone, byte[] passwordHash, byte[] passwordSalt, string cpf, DateTime birthday)
         {
             return new Driver
@@ -17,8 +22,35 @@ namespace PontoAPonto.Domain.Models.Entities
                 Birthday = birthday,
                 Otp = new Otp(),
                 Status = UserStatus.WaitingOtpVerification,
-                IsFirstAccess = true
+                IsFirstAccess = true,
+                Reputation = 5,
+                UrlProfilePicture = null,
+                UrlCnhPicture = null,
+                Approved = false,
+                ApprovedAt = default
             };
+        }
+
+        public void CaptureProfilePicture(string pfpUrl)
+        {
+            UrlProfilePicture = pfpUrl;
+        }
+
+        public void CaptureCnhPicture(string cnhUrl)
+        {
+            UrlCnhPicture = cnhUrl;
+        }
+
+        public bool AproveDriver()
+        {
+            if (string.IsNullOrEmpty(UrlProfilePicture) || string.IsNullOrEmpty(UrlCnhPicture))
+            {
+                return false;
+            }
+
+            Approved = true;
+            ApprovedAt = DateTime.Now;
+            return true;
         }
     }
 }

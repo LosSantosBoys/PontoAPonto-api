@@ -26,7 +26,8 @@ namespace PontoAPonto.Domain.Models.Entities
         public DateTime? ResetTokenExpiracy { get; set; }
         [MaxLength(11)]
         public string? Cpf { get; protected set; }
-        public DateTime? Birthday {  get; protected set; }
+        public DateTime? Birthday { get; protected set; }
+        public double Reputation { get; protected set; }
 
         public User CreateUser(string name, string email, string phone, byte[] passwordHash, byte[] passwordSalt, string cpf, DateTime birthday)
         {
@@ -41,7 +42,8 @@ namespace PontoAPonto.Domain.Models.Entities
                 Birthday = birthday,
                 Otp = new Otp(),
                 Status = UserStatus.WaitingOtpVerification,
-                IsFirstAccess = true
+                IsFirstAccess = true,
+                Reputation = 5
             };
         }
 
