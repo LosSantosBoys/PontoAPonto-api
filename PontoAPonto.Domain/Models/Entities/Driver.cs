@@ -6,8 +6,9 @@ namespace PontoAPonto.Domain.Models.Entities
     {
         public string? UrlProfilePicture { get; private set; }
         public string? UrlCnhPicture { get; private set; }
+        public CarInfo? CarInfo { get; private set; }
         public bool Approved { get; private set; }
-        public DateTime ApprovedAt { get; private set; }
+        public DateTime? ApprovedAt { get; private set; }
 
         public static new Driver CreateUser(string name, string email, string phone, byte[] passwordHash, byte[] passwordSalt, string cpf, DateTime birthday)
         {
@@ -27,7 +28,7 @@ namespace PontoAPonto.Domain.Models.Entities
                 UrlProfilePicture = null,
                 UrlCnhPicture = null,
                 Approved = false,
-                ApprovedAt = default
+                ApprovedAt = null
             };
         }
 
@@ -39,6 +40,11 @@ namespace PontoAPonto.Domain.Models.Entities
         public void CaptureCnhPicture(string cnhUrl)
         {
             UrlCnhPicture = cnhUrl;
+        }
+
+        public void SetCarInfo(string model, string year, string plate, string color)
+        {
+            CarInfo = new CarInfo(model, year, plate, color);
         }
 
         public bool AproveDriver()

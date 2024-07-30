@@ -53,9 +53,15 @@ namespace PontoAPonto.Data.Configs
 
             builder.Property(x => x.UrlCnhPicture);
 
+            builder.OwnsOne(u => u.CarInfo,
+            optBuilder =>
+            {
+                optBuilder.ToTable("Drivers");
+            });
+
             builder.Property(x => x.Approved).IsRequired();
 
-            builder.Property(x => x.ApprovedAt).IsRequired();
+            builder.Property(x => x.ApprovedAt);
         }
     }
 }
