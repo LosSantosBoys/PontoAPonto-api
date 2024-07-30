@@ -60,5 +60,18 @@ namespace PontoAPonto.Api.Controllers
 
             return await _userUseCase.GetUserProfileAsync(userEmail);
         }
+
+        [HttpGet("profile/me/delete")]
+        [ProducesResponseType(typeof(UserProfileResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CustomError), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(CustomError), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(CustomError), StatusCodes.Status500InternalServerError)]
+        [Authorize]
+        public async Task<CustomActionResult> DeleteAccount()
+        {
+            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+
+            return await _userUseCase.DeleteAccountAsync(userEmail);
+        }
     }
 }

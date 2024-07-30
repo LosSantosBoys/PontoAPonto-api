@@ -6,5 +6,6 @@ namespace PontoAPonto.Domain.Interfaces.UseCase
     public interface IUserUseCase
     {
         Task<CustomActionResult<UserProfileResponse>> GetUserProfileAsync(string? email);
+        Task<CustomActionResult> DeleteAccountAsync(string? email);
     }
 }

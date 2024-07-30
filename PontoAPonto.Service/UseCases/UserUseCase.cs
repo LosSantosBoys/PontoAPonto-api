@@ -35,5 +35,15 @@ namespace PontoAPonto.Service.UseCases
             var profile = _mapper.Map<UserProfileResponse>(user);
             return profile;
         }
+
+        public async Task<CustomActionResult> DeleteAccountAsync(string? email)
+        {
+            if (string.IsNullOrEmpty(email))
+            {
+                return UserError.Unauthorized();
+            }
+
+            return await _userService.DeleteUserByEmailAsync(email);
+        }
     }
 }
