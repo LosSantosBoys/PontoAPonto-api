@@ -49,10 +49,6 @@ namespace PontoAPonto.Data.Configs
 
             builder.Property(x => x.Reputation).IsRequired();
 
-            builder.Property(x => x.UrlProfilePicture);
-
-            builder.Property(x => x.UrlCnhPicture);
-
             builder.OwnsOne(u => u.CarInfo,
             optBuilder =>
             {

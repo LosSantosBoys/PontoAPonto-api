@@ -92,6 +92,11 @@
                 {
                     public const string InvalidSignIn = "SignIn.InvalidSignIn";
                 }
+
+                public struct User
+                {
+                    public const string Unauthorized = "User.Unauthorized";
+                }
             }
 
             public struct Aws
@@ -126,6 +131,11 @@
                 public struct SignIn
                 {
                     public const string InvalidSignIn = "Seus dados estão incorretos. Verifique se digitou corretamente seu e-mail e preste atenção nas letras maiúsculas em sua senha.";
+                }
+
+                public struct User
+                {
+                    public const string Unauthorized = "Ops! Parece que você se perdeu. Por favor, entre em sua conta e tente novamente!";
                 }
             }
 

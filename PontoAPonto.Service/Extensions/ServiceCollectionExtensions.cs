@@ -44,6 +44,7 @@ namespace PontoAPonto.Service.Extensions
             //UseCases
             services.AddScoped<ISignUpUseCase, SignUpUseCase>();
             services.AddScoped<ISignInUseCase, SignInUseCase>();
+            services.AddScoped<IUserUseCase, UserUseCase>();
 
             return services;
         }

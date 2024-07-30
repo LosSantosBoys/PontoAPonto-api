@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using PontoAPonto.Domain.Dtos.Responses;
+using PontoAPonto.Domain.Dtos.Responses.User;
 using PontoAPonto.Domain.Models.Entities;
 
 namespace PontoAPonto.Domain.Profiles
@@ -8,7 +8,8 @@ namespace PontoAPonto.Domain.Profiles
     {
         public UserProfile() 
         {
-            CreateMap<User, UserResponse>();
+            CreateMap<User, UserProfileResponse>()
+                .ForMember(src => src.UserSince, opt => opt.MapFrom(u => u.CreatedAt));
         }
     }
 }

@@ -4,8 +4,6 @@ namespace PontoAPonto.Domain.Models.Entities
 {
     public class Driver : User
     {
-        public string? UrlProfilePicture { get; private set; }
-        public string? UrlCnhPicture { get; private set; }
         public CarInfo? CarInfo { get; private set; }
         public bool Approved { get; private set; }
         public DateTime? ApprovedAt { get; private set; }
@@ -25,21 +23,9 @@ namespace PontoAPonto.Domain.Models.Entities
                 Status = UserStatus.WaitingOtpVerification,
                 IsFirstAccess = true,
                 Reputation = 5,
-                UrlProfilePicture = null,
-                UrlCnhPicture = null,
                 Approved = false,
                 ApprovedAt = null
             };
-        }
-
-        public void CaptureProfilePicture(string pfpUrl)
-        {
-            UrlProfilePicture = pfpUrl;
-        }
-
-        public void CaptureCnhPicture(string cnhUrl)
-        {
-            UrlCnhPicture = cnhUrl;
         }
 
         public void SetCarInfo(string model, string year, string plate, string color)
@@ -49,11 +35,6 @@ namespace PontoAPonto.Domain.Models.Entities
 
         public bool AproveDriver()
         {
-            if (string.IsNullOrEmpty(UrlProfilePicture) || string.IsNullOrEmpty(UrlCnhPicture))
-            {
-                return false;
-            }
-
             Approved = true;
             ApprovedAt = DateTime.Now;
             return true;

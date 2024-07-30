@@ -1,7 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PontoAPonto.Domain.Dtos.Requests;
+using PontoAPonto.Domain.Dtos.Responses.User;
 using PontoAPonto.Domain.Interfaces.Services;
+using PontoAPonto.Domain.Interfaces.UseCase;
+using PontoAPonto.Domain.Models;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 
 namespace PontoAPonto.Api.Controllers
 {
@@ -10,9 +15,12 @@ namespace PontoAPonto.Api.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
-        public UserController(IUserService userService)
+        private readonly IUserUseCase _userUseCase;
+
+        public UserController(IUserService userService, IUserUseCase userUseCase)
         {
             _userService = userService;
+            _userUseCase = userUseCase;
         }
 
         [HttpPatch("forgot-password")]
@@ -39,6 +47,18 @@ namespace PontoAPonto.Api.Controllers
             var response = await _userService.ResetPasswordAsync(token, request);
 
             return Ok(response);
+        }
+
+        [HttpGet("profile/me")]
+        [ProducesResponseType(typeof(UserProfileResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CustomError), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(CustomError), StatusCodes.Status401Unauthorized)]
+        [Authorize]
+        public async Task<CustomActionResult<UserProfileResponse>> GetProfile()
+        {
+            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+
+            return await _userUseCase.GetUserProfileAsync(userEmail);
         }
     }
 }
