@@ -15,8 +15,4 @@
     <ProjectReference Include="..\PontoAPonto.Domain\PontoAPonto.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="NovaPasta\" />
-  </ItemGroup>
-
 </Project>

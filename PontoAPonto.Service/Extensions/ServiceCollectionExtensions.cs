@@ -31,6 +31,7 @@ namespace PontoAPonto.Service.Extensions
             services.AddScoped<IDriverRepository, DriverRepository>();
             services.AddScoped<IGasPriceScrapper, GasPriceScrapper>();
             services.AddScoped<IMapsApi, MapsApi>();
+            services.AddScoped<IS3Repository, S3Repository>();
 
             //Services
             services.AddScoped<IAuthService, AuthService>();

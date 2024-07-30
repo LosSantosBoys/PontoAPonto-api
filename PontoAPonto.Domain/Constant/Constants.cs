@@ -93,6 +93,13 @@
                     public const string InvalidSignIn = "SignIn.InvalidSignIn";
                 }
             }
+
+            public struct Aws
+            {
+                public const string UploadFail = "S3.UploadFail";
+                public const string GetFileFail = "S3.GetFileFail";
+                public const string FileNotFound = "S3.FileNotFound";
+            }
         }
 
         public struct ErrorMessages
@@ -120,6 +127,13 @@
                 {
                     public const string InvalidSignIn = "Seus dados estão incorretos. Verifique se digitou corretamente seu e-mail e preste atenção nas letras maiúsculas em sua senha.";
                 }
+            }
+
+            public struct Aws
+            {
+                public const string UploadFail = "Falha ao realizar o upload do arquivo solicitado.";
+                public const string GetFileFail = "Erro ao fazer o download do arquivo solicitado.";
+                public const string FileNotFound = "Arquivo solicitado não encontrado.";
             }
         }
         #endregion
