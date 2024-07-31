@@ -24,7 +24,7 @@ namespace PontoAPonto.Domain.Models
             Error = new CustomError(HttpStatusCode.OK, "NoError", "");
         }
 
-        public async Task ExecuteResultAsync(ActionContext context)
+        public virtual async Task ExecuteResultAsync(ActionContext context)
         {
             ObjectResult result;
 
@@ -88,7 +88,7 @@ namespace PontoAPonto.Domain.Models
             return result.Value;
         }
 
-        public async new Task ExecuteResultAsync(ActionContext context)
+        public async override Task ExecuteResultAsync(ActionContext context)
         {
             ObjectResult result;
 

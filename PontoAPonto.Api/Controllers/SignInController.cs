@@ -18,10 +18,10 @@ namespace PontoAPonto.Api.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(CustomActionResult<SignInResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(SignInResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(CustomError), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(CustomError), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> SignIn(SignInRequest request)
+        public async Task<CustomActionResult<SignInResponse>> SignIn(SignInRequest request)
         {
             return await _signInInUseCase.SignInAsync(request);
         }

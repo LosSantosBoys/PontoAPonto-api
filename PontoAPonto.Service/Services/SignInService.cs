@@ -3,6 +3,7 @@ using PontoAPonto.Domain.Dtos.Responses;
 using PontoAPonto.Domain.Interfaces.Services;
 using PontoAPonto.Domain.Models;
 using PontoAPonto.Domain.Errors.Business;
+using PontoAPonto.Domain.Enums;
 
 namespace PontoAPonto.Service.Services
 {
