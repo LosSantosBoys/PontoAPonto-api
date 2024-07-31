@@ -76,6 +76,8 @@
                 public struct SignIn
                 {
                     public const string InvalidSignIn = "SignIn.InvalidSignIn";
+                    public const string OtpNotCompleted = "SignIn.OtpNotCompleted";
+                    public const string ReprovedUser = "SignIn.ReprovedUser";
                 }
 
                 public struct Otp
@@ -119,6 +121,8 @@
                 public struct SignIn
                 {
                     public const string InvalidSignIn = "Seus dados estão incorretos. Verifique se digitou corretamente seu e-mail e preste atenção nas letras maiúsculas em sua senha.";
+                    public const string OtpNotCompleted = "Parece que você ainda não verificou sua conta. Confira o código que enviamos ao seu e-mail ou gere um novo!";
+                    public const string ReprovedUser = "Infelizmente você foi reprovado para o Ponto A Ponto. Não se preocupe, você poderá tentar novamente no futuro. Agradecemos pelo seu tempo!";
                 }
 
                 public struct Otp

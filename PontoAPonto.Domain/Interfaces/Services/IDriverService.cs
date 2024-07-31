@@ -11,5 +11,6 @@ namespace PontoAPonto.Domain.Interfaces.Services
         Task<CustomActionResult> UpdateDriverAsync(Driver driver);
         Task<CustomActionResult> CaptureProfilePictureAsync(string email, string imageBase64);
         Task<CustomActionResult> CaptureDocumentPictureAsync(string email, string imageBase64);
+        Task<CustomActionResult> InsertCarInfoAsync(CarInfo request, string email);
     }
 }

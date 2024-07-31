@@ -65,6 +65,19 @@ namespace PontoAPonto.Service.Services
                 return SignInError.SignInDoesNotMatch();
             }
 
+            if (driverResult.Value.Status == DriverStatus.WAITING_OTP_VERIFICATION ||driverResult.Value.Status == DriverStatus.OTP_BLOCKED)
+            {
+                return SignInError.OtpNotCompleted;
+            }
+
+            if (driverResult.Value.Status == DriverStatus.REPROVED)
+            {
+                return SignInError.ReprovedUser;
+            }
+
+            //TODO - Think in some way to let driver login if needs to capture face/document picture but block if waiting for manual validation,
+            // maybe using a 200 response w/ actions
+
             var token = _authService.GenerateJwtToken(driverResult.Value.Email, "DRIVER");
 
             var responseData = new SignInResponse { TokenType = "Bearer", Token = token, IsFirstAccess = driverResult.Value.IsFirstAccess };

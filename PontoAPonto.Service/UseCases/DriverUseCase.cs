@@ -36,5 +36,15 @@ namespace PontoAPonto.Service.UseCases
 
             return await _driverService.CaptureDocumentPictureAsync(email, request.ImageBase64);
         }
+
+        public async Task<CustomActionResult> InsertCarInfoAsync(CarInfo request, string? email)
+        {
+            if (string.IsNullOrEmpty(email))
+            {
+                return DriverError.Unauthorized();
+            }
+
+            return await _driverService.InsertCarInfoAsync(request, email);
+        }
     }
 }

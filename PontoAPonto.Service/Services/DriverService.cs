@@ -2,7 +2,6 @@
 using PontoAPonto.Domain.Interfaces.Services;
 using PontoAPonto.Domain.Models;
 using PontoAPonto.Domain.Models.Entities;
-using System.Net;
 using static PontoAPonto.Domain.Constant.Constants;
 
 namespace PontoAPonto.Service.Services
@@ -35,6 +34,7 @@ namespace PontoAPonto.Service.Services
 
         public async Task<CustomActionResult> UpdateDriverAsync(Driver driver)
         {
+            driver.UpdatedAt = DateTime.Now;
             return await _driverRepository.UpdateDriverAsync(driver);
         }
 
@@ -64,7 +64,7 @@ namespace PontoAPonto.Service.Services
                 return updateResult.Error;
             }
 
-            return new CustomActionResult(HttpStatusCode.OK);
+            return CustomActionResult.NoContent();
         }
 
         public async Task<CustomActionResult> CaptureDocumentPictureAsync(string email, string imageBase64)
@@ -93,7 +93,28 @@ namespace PontoAPonto.Service.Services
                 return updateResult.Error;
             }
 
-            return new CustomActionResult(HttpStatusCode.OK);
+            return CustomActionResult.NoContent();
+        }
+
+        public async Task<CustomActionResult> InsertCarInfoAsync(CarInfo request, string email)
+        {
+            var driverResult = await GetDriverByEmailAsync(email);
+
+            if (!driverResult.Success)
+            {
+                return driverResult.Error;
+            }
+
+            driverResult.Value.SetCarInfo(request);
+
+            var updateResult = await UpdateDriverAsync(driverResult.Value);
+
+            if (!updateResult.Success)
+            {
+                return updateResult.Error;
+            }
+
+            return CustomActionResult.NoContent();
         }
     }
 }

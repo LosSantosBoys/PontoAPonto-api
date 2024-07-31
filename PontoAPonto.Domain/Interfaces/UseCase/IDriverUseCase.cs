@@ -7,5 +7,6 @@ namespace PontoAPonto.Domain.Interfaces.UseCase
     {
         Task<CustomActionResult> CaptureProfilePictureAsync(CapturePictureRequest request, string? email);
         Task<CustomActionResult> CaptureDocumentPictureAsync(CapturePictureRequest request, string? email);
+        Task<CustomActionResult> InsertCarInfoAsync(CarInfo request, string? email);
     }
 }

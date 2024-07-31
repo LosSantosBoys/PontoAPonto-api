@@ -50,9 +50,9 @@ namespace PontoAPonto.Domain.Models.Entities
             Status = DriverStatus.WAITING_DOCUMENT_CAPTURE;
         }
 
-        public void SetCarInfo(string model, string year, string plate, string color)
+        public void SetCarInfo(CarInfo carInfo)
         {
-            CarInfo = new CarInfo(model, year, plate, color);
+            CarInfo = new CarInfo(carInfo.Model, carInfo.Year, carInfo.Plate, carInfo.Color);
             Status = DriverStatus.WAITING_MANUAL_APPROVAL;
         }
 
