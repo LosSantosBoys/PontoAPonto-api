@@ -17,7 +17,7 @@ namespace PontoAPonto.Domain.Models
             StatusCode = error.StatusCode;
         }
 
-        public CustomActionResult(HttpStatusCode statusCode)
+        public CustomActionResult(HttpStatusCode statusCode = HttpStatusCode.OK)
         {
             Success = true;
             StatusCode = statusCode;

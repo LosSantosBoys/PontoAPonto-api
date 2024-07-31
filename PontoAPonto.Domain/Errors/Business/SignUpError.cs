@@ -15,8 +15,5 @@ namespace PontoAPonto.Domain.Errors.Business
 
         public static CustomError InvalidDateFormat() => new CustomError(
             HttpStatusCode.BadRequest, ErrorCodes.Business.SignUp.InvalidDateFormat, ErrorMessages.Business.SignUp.InvalidDateFormat);
-
-        public static CustomError InvalidOtp() => new CustomError(
-            HttpStatusCode.BadRequest, ErrorCodes.Business.SignUp.InvalidOtp, ErrorMessages.Business.SignUp.InvalidOtp);
     }
 }

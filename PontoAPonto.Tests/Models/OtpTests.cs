@@ -11,11 +11,11 @@ namespace PontoAPonto.Tests.Models
             var otp = new Otp();
             for (int i = 0; i < 6; i++)
             {
-                otp.SendOtp(1234);
+                otp.ValidateOtp(1234);
             }
 
             // Act
-            var result = otp.SendOtp(otp.Password);
+            var result = otp.ValidateOtp(otp.Password);
 
             // Assert
             Assert.False(result);
@@ -28,7 +28,7 @@ namespace PontoAPonto.Tests.Models
             var otp = new Otp();
 
             // Act
-            var result = otp.SendOtp(12345);
+            var result = otp.ValidateOtp(12345);
 
             // Assert
             Assert.False(result);
@@ -41,7 +41,7 @@ namespace PontoAPonto.Tests.Models
             var otp = new Otp();
 
             // Act
-            var result = otp.SendOtp(otp.Password);
+            var result = otp.ValidateOtp(otp.Password);
 
             // Assert
             Assert.True(result);

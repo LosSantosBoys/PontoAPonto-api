@@ -31,8 +31,7 @@ namespace PontoAPonto.Data.Configs
                 .IsRequired();
 
             builder.Property(u => u.Status)
-                .IsRequired()
-                .HasMaxLength(255);
+                .IsRequired();
 
             builder.Property(x => x.PasswordSalt)
                 .IsRequired();

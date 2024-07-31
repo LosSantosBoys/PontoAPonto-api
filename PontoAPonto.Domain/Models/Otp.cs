@@ -1,4 +1,6 @@
-﻿namespace PontoAPonto.Domain.Models
+﻿using PontoAPonto.Domain.Errors.Business;
+
+namespace PontoAPonto.Domain.Models
 {
     public class Otp
     {
@@ -15,29 +17,46 @@
         public int Attempts { get; private set; }
         public bool IsVerified { get; private set; }
 
-        public bool SendOtp(int otpCode)
+        public CustomActionResult ValidateOtp(int otpCode)
         {
-            if (IsVerified || Attempts >= maxAttempts)
-                return false;
+            if (IsVerified)
+            {
+                return OtpError.UserAlreadyVerified;
+            }
 
-            if (DateTime.Now > Expiracy || Password != otpCode)
+            if (Attempts >= maxAttempts)
+            {
+                return OtpError.ExceededMaximumAttempts;
+            }
+
+            if (DateTime.Now > Expiracy)
             {
                 Attempts++;
-                return false;
+                return OtpError.ExpiredOtp;
+            }
+
+            if (Password != otpCode)
+            {
+                Attempts++;
+                return OtpError.InvalidOtp;
             }
 
             IsVerified = true;
-            return IsVerified;
+            Attempts = 0;
+            return new CustomActionResult();
         }
 
-        public bool GenerateNewOtp()
+        public CustomActionResult GenerateNewOtp()
         {
-            if (IsVerified || Attempts > maxAttempts) 
-                return false;
+            if (Attempts > maxAttempts)
+            {
+                return OtpError.ExceededMaximumAttempts;
+            }
 
+            IsVerified = false;
             Password = new Random().Next(1000, 9999);
             Expiracy = DateTime.Now.AddMinutes(10);
-            return true;
+            return new CustomActionResult();
         }
     }
 }

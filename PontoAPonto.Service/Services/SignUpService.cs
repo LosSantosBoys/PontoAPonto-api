@@ -5,7 +5,6 @@ using PontoAPonto.Domain.Errors.Business;
 using PontoAPonto.Domain.Helpers;
 using PontoAPonto.Domain.Interfaces.Services;
 using PontoAPonto.Domain.Models;
-using PontoAPonto.Domain.Models.Entities;
 using static PontoAPonto.Domain.Constant.Constants;
 
 namespace PontoAPonto.Service.Services
@@ -89,54 +88,56 @@ namespace PontoAPonto.Service.Services
 
         public async Task<CustomActionResult> ValidateDriverOtpAsync(ValidateOtpRequest request)
         {
-            var driverResult = await _driverService.GetDriverByEmailAsync(request.Email);
-
-            if (!driverResult.Success)
-            {
-                return driverResult.Error;
-            }
-
-            var isValid = driverResult.Value.ValidateOtp(request.Otp);
-
-            if (!isValid)
-            {
-                return SignUpError.InvalidOtp();
-            }
-
-            var updateResult = await _driverService.UpdateDriverAsync(driverResult);
-
-            if (!updateResult.Success)
-            {
-                return updateResult.Error;
-            }
-
-            return new CustomActionResult(HttpStatusCode.OK);
+            return await ValidateOtpAsync(
+                _driverService.GetDriverByEmailAsync,
+                (driver, otp) => driver.ValidateOtp(otp),
+                _driverService.UpdateDriverAsync,
+                request
+            );
         }
 
         public async Task<CustomActionResult> ValidateUserOtpAsync(ValidateOtpRequest request)
         {
-            var userResult = await _userService.GetUserByEmailAsync(request.Email);
+            return await ValidateOtpAsync(
+                _userService.GetUserByEmailAsync,
+                (user, otp) => user.ValidateOtp(otp),
+                _userService.UpdateUserAsync,
+                request
+            );
+        }
 
-            if (!userResult.Success)
+        private async Task<CustomActionResult> ValidateOtpAsync<T>(
+            Func<string, Task<CustomActionResult<T>>> getEntityByEmailAsync,
+            Func<T, int, CustomActionResult> validateOtp,
+            Func<T, Task<CustomActionResult>> updateEntityAsync,
+            ValidateOtpRequest request)
+        {
+            var entityResult = await getEntityByEmailAsync(request.Email);
+
+            if (!entityResult.Success)
             {
-                return userResult.Error;
+                return entityResult.Error;
             }
 
-            var isValid = userResult.Value.ValidateOtp(request.Otp);
+            var otpResult = validateOtp(entityResult.Value, request.Otp);
 
-            if (!isValid)
+            if (otpResult.Success || otpResult.Error == OtpError.InvalidOtp || otpResult.Error == OtpError.ExpiredOtp)
             {
-                return SignUpError.InvalidOtp();
+                var updateResult = await updateEntityAsync(entityResult.Value);
+
+                if (!updateResult.Success)
+                {
+                    return updateResult.Error;
+                }
+
+                return otpResult;
+            }
+            else if (!otpResult.Success)
+            {
+                return otpResult;
             }
 
-            var updateResult = await _userService.UpdateUserAsync(userResult);
-
-            if (!updateResult.Success)
-            {
-                return updateResult.Error;
-            }
-
-            return new CustomActionResult(HttpStatusCode.OK);
+            return new CustomActionResult();
         }
 
         private async Task<(CustomActionResult result, DateTime parsedDate)> ValidateRequestAsync(SignUpRequest request)

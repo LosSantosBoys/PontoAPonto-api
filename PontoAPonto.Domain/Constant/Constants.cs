@@ -2,21 +2,6 @@
 {
     public static class Constants
     {
-        public struct UserStatus
-        {
-            public const string WaitingOtpVerification = "Waiting for OTP verification";
-            public const string OtpVerified = "OTP verified";
-            public const string SignInAvailable = "SignIn Available";
-        }
-
-        public struct ResponseMessages
-        {
-            public const string UserSignUpCreated = "User and OTP code created";
-            public const string ErrorCreatingUserSignUp = "Failed to create user.";
-            public const string SignInError = "Email and password does not match.";
-            public const string SignInSuccess = "SignIn success";
-        }
-
         public struct Email
         {
             public struct SmtpServer
@@ -86,12 +71,19 @@
                 {
                     public const string DataConflict = "SignUp.DataConflict";
                     public const string InvalidDateFormat = "SignUp.InvalidDateFormat";
-                    public const string InvalidOtp = "SignUp.InvalidOtp";
                 }
 
                 public struct SignIn
                 {
                     public const string InvalidSignIn = "SignIn.InvalidSignIn";
+                }
+
+                public struct Otp
+                {
+                    public const string UserAlreadyVerified = "Otp.UserAlreadyVerified";
+                    public const string ExceededMaximumAttempts = "Otp.ExceededMaximumAttempts";
+                    public const string ExpiredOtp = "Otp.ExpiredOtp";
+                    public const string InvalidOtp = "Otp.InvalidOtp";
                 }
             }
 
@@ -122,12 +114,19 @@
                 {
                     public const string DataConflict = "Parece que seus dados já existem em nosso sistema. Vamos tentar novamente?";
                     public const string InvalidDateFormat = "Formato de data inválida. Utilize o formato dd-MM-aaaa.";
-                    public const string InvalidOtp = "Parece que seu código é inválido. Gere um novo e tente novamente!";
                 }
 
                 public struct SignIn
                 {
                     public const string InvalidSignIn = "Seus dados estão incorretos. Verifique se digitou corretamente seu e-mail e preste atenção nas letras maiúsculas em sua senha.";
+                }
+
+                public struct Otp
+                {
+                    public const string UserAlreadyVerified = "Parece que você já verificou sua conta. Tente entrar no aplicativo!";
+                    public const string ExceededMaximumAttempts = "Parece que você ultrapassou o limite de tentativas. Tente novamente mais tarde.";
+                    public const string ExpiredOtp = "O código informado está expirado. Gere um novo e tente novamente.";
+                    public const string InvalidOtp = "O código informado é inválido. Verifique-o e tente novamente.";
                 }
             }
 

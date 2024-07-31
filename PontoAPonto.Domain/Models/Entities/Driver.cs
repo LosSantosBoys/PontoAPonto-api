@@ -1,9 +1,10 @@
-﻿using static PontoAPonto.Domain.Constant.Constants;
+﻿using PontoAPonto.Domain.Enums;
 
 namespace PontoAPonto.Domain.Models.Entities
 {
     public class Driver : UserBase
     {
+        public DriverStatus Status { get; protected set; }
         public CarInfo? CarInfo { get; private set; }
         public bool Approved { get; private set; }
         public DateTime? ApprovedAt { get; private set; }
@@ -20,23 +21,42 @@ namespace PontoAPonto.Domain.Models.Entities
                 Cpf = cpf,
                 Birthday = birthday,
                 Otp = new Otp(),
-                Status = UserStatus.WaitingOtpVerification,
                 IsFirstAccess = true,
                 Reputation = 5,
-                Approved = false,
-                ApprovedAt = null
+                Status = DriverStatus.WAITING_OTP_VERIFICATION,
+                Approved = false
             };
+        }
+
+        public override CustomActionResult ValidateOtp(int otpCode)
+        {
+            var result = base.ValidateOtp(otpCode);
+
+            if (result.Success)
+            {
+                Status = DriverStatus.SIGNIN_AVAILABLE;
+            }
+
+            return result;
+        }
+
+        public void CaptureFacePicture()
+        {
+            Status = DriverStatus.WAITING_DOCUMENT_CAPTURE;
         }
 
         public void SetCarInfo(string model, string year, string plate, string color)
         {
             CarInfo = new CarInfo(model, year, plate, color);
+            Status = DriverStatus.WAITING_MANUAL_APPROVAL;
         }
 
         public bool AproveDriver()
         {
             Approved = true;
             ApprovedAt = DateTime.Now;
+            Status = DriverStatus.APPROVED;
+
             return true;
         }
     }
