@@ -9,6 +9,6 @@ namespace PontoAPonto.Domain.Interfaces.UseCase
     {
         Task<CustomActionResult> CreateSignUpAsync(SignUpRequest request, UserType userType);
         Task<CustomActionResult> ValidateOtpAsync(ValidateOtpRequest request);
-        Task<CustomActionResult> CreateNewOtpAsync(CreateNewOtpRequest);
+        Task<CustomActionResult> CreateNewOtpAsync(CreateNewOtpRequest request);
     }
 }

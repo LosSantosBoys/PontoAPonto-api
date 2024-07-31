@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PontoAPonto.Data.Contexts;
 using PontoAPonto.Domain.Errors.Business;
+using PontoAPonto.Domain.Errors.Database;
 using PontoAPonto.Domain.Interfaces.Repositories;
 using PontoAPonto.Domain.Models;
 using PontoAPonto.Domain.Models.Entities;
@@ -45,7 +46,7 @@ namespace PontoAPonto.Data.Repositories
 
                 if (rowsAffected == 0)
                 {
-                    return SignUpError.UserNotFound();
+                    return DriverRepositoryError.DriverNotFound();
                 }
 
                 return CustomActionResult.NoContent();
@@ -62,7 +63,7 @@ namespace PontoAPonto.Data.Repositories
 
             if (driver == null)
             {
-                return SignUpError.UserNotFound();
+                return DriverRepositoryError.DriverNotFound();
             }
 
             return driver;
