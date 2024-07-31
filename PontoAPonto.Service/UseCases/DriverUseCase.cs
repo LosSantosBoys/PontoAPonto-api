@@ -17,14 +17,24 @@ namespace PontoAPonto.Service.UseCases
             _driverService = driverService;
         }
 
-        public async Task<CustomActionResult> CaptureProfilePicture([FromBody] CaptureProfilePictureRequest request, string? email)
+        public async Task<CustomActionResult> CaptureProfilePictureAsync([FromBody] CapturePictureRequest request, string? email)
         {
             if (string.IsNullOrEmpty(email))
             {
                 return DriverError.Unauthorized();
             }
 
-            return await _driverService.CaptureProfilePicture(email, request.ImageBase64);
+            return await _driverService.CaptureProfilePictureAsync(email, request.ImageBase64);
+        }
+
+        public async Task<CustomActionResult> CaptureDocumentPictureAsync(CapturePictureRequest request, string? email)
+        {
+            if (string.IsNullOrEmpty(email))
+            {
+                return DriverError.Unauthorized();
+            }
+
+            return await _driverService.CaptureDocumentPictureAsync(email, request.ImageBase64);
         }
     }
 }

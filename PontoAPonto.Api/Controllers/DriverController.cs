@@ -25,10 +25,23 @@ namespace PontoAPonto.Api.Controllers
         [ProducesResponseType(typeof(CustomError), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(CustomError), StatusCodes.Status500InternalServerError)]
         [Authorize]
-        public async Task<CustomActionResult> CaptureProfilePicture([FromBody] CaptureProfilePictureRequest request)
+        public async Task<CustomActionResult> CaptureProfilePicture([FromBody] CapturePictureRequest request)
         {
             var email = User.FindFirst(ClaimTypes.Email)?.Value;
-            return await _driverUseCase.CaptureProfilePicture(request, email);
+            return await _driverUseCase.CaptureProfilePictureAsync(request, email);
+        }
+
+
+        [HttpPatch("capture/document-picture")]
+        [ProducesResponseType(typeof(UserProfileResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CustomError), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(CustomError), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(CustomError), StatusCodes.Status500InternalServerError)]
+        [Authorize]
+        public async Task<CustomActionResult> CaptureDocumentPicture([FromBody] CapturePictureRequest request)
+        {
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            return await _driverUseCase.CaptureDocumentPictureAsync(request, email);
         }
     }
 }

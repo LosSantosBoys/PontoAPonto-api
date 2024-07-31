@@ -38,7 +38,7 @@ namespace PontoAPonto.Service.Services
             return await _driverRepository.UpdateDriverAsync(driver);
         }
 
-        public async Task<CustomActionResult> CaptureProfilePicture(string email, string imageBase64)
+        public async Task<CustomActionResult> CaptureProfilePictureAsync(string email, string imageBase64)
         {
             var driver = await GetDriverByEmailAsync(email);
 
@@ -56,6 +56,35 @@ namespace PontoAPonto.Service.Services
             }
 
             driver.Value.CaptureFacePicture();
+
+            var updateResult = await UpdateDriverAsync(driver.Value);
+
+            if (!updateResult.Success)
+            {
+                return updateResult.Error;
+            }
+
+            return new CustomActionResult(HttpStatusCode.OK);
+        }
+
+        public async Task<CustomActionResult> CaptureDocumentPictureAsync(string email, string imageBase64)
+        {
+            var driver = await GetDriverByEmailAsync(email);
+
+            if (!driver.Success)
+            {
+                return driver.Error;
+            }
+
+            var path = $"{S3.DocumentPicturesDir}{S3.DriverDir}/{driver.Value.Id.ToString()}.png";
+            var s3Result = await _s3Repository.UploadFileAsync(S3.BucketName, imageBase64, path);
+
+            if (s3Result.Success)
+            {
+                return s3Result.Error;
+            }
+
+            driver.Value.CaptureDocumentPicture();
 
             var updateResult = await UpdateDriverAsync(driver.Value);
 
