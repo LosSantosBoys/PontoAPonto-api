@@ -17,5 +17,12 @@ namespace PontoAPonto.Domain.Helpers
             var errorMessage = FormatMessage(ErrorMessages.Generic.Database.EntityNotFound, entityName);
             return new CustomError(HttpStatusCode.BadRequest, errorCode, errorMessage);
         }
+
+        public static CustomError CreateUnauthorizedError(string entityName)
+        {
+            var errorCode = FormatMessage(ErrorCodes.Generic.Unauthorized, entityName);
+            var errorMessage = FormatMessage(ErrorMessages.Generic.Unauthorized, entityName);
+            return new CustomError(HttpStatusCode.Unauthorized, errorCode, errorMessage);
+        }
     }
 }

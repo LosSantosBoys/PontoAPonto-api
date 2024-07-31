@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using System.Text;
-using PontoAPonto.Domain.Dtos.Requests;
 using PontoAPonto.Domain.Dtos.Requests.SignUp;
 using PontoAPonto.Domain.Errors.Business;
 using PontoAPonto.Domain.Helpers;
@@ -204,7 +203,7 @@ namespace PontoAPonto.Service.Services
 
             var generateOtp = driverResult.Value.GenerateNewOtp();
 
-            var updateResult = await _userService.UpdateUserAsync(driverResult.Value);
+            var updateResult = await _driverService.UpdateDriverAsync(driverResult.Value);
 
             if (!updateResult.Success)
             {

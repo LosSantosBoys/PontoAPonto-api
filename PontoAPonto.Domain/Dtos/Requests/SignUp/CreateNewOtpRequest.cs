@@ -1,7 +1,7 @@
 ﻿using PontoAPonto.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace PontoAPonto.Domain.Dtos.Requests
+namespace PontoAPonto.Domain.Dtos.Requests.SignUp
 {
     public class CreateNewOtpRequest
     {

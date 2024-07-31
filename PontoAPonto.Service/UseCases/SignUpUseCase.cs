@@ -1,5 +1,4 @@
-﻿using PontoAPonto.Domain.Dtos.Requests;
-using PontoAPonto.Domain.Dtos.Requests.SignUp;
+﻿using PontoAPonto.Domain.Dtos.Requests.SignUp;
 using PontoAPonto.Domain.Enums;
 using PontoAPonto.Domain.Interfaces.Services;
 using PontoAPonto.Domain.Interfaces.UseCase;

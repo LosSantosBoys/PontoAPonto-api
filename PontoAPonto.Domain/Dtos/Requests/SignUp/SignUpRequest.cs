@@ -31,12 +31,12 @@ namespace PontoAPonto.Domain.Dtos.Requests.SignUp
 
         public User ToEntity(byte[] passwordHash, byte[] passwordSalt, DateTime birthdayDate)
         {
-            return new User().CreateUser(Name, Email, Phone, passwordHash, passwordSalt, Cpf, birthdayDate);
+            return User.CreateUser(Name, Email, Phone, passwordHash, passwordSalt, Cpf, birthdayDate);
         }
 
         public Driver ToDriverEntity(byte[] passwordHash, byte[] passwordSalt, DateTime birthdayDate)
         {
-            return Driver.CreateUser(Name, Email, Phone, passwordHash, passwordSalt, Cpf, birthdayDate);
+            return Driver.CreateDriver(Name, Email, Phone, passwordHash, passwordSalt, Cpf, birthdayDate);
         }
     }
 }

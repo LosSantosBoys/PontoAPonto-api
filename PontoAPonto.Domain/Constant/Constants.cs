@@ -72,6 +72,7 @@
             public struct Generic
             {
                 public const string InternalError = "Generic.InternalError";
+                public const string Unauthorized = "{0}.Unauthorized";
 
                 public struct Database
                 {
@@ -92,11 +93,6 @@
                 {
                     public const string InvalidSignIn = "SignIn.InvalidSignIn";
                 }
-
-                public struct User
-                {
-                    public const string Unauthorized = "User.Unauthorized";
-                }
             }
 
             public struct Aws
@@ -112,6 +108,7 @@
             public struct Generic
             {
                 public const string InternalError = "Ops! Encontramos um problema interno. Volte em breve e veremos como podemos te levar aonde você precisa!";
+                public const string Unauthorized = "Ops! Parece que você se perdeu. Por favor, entre em sua conta e tente novamente!";
 
                 public struct Database
                 {
@@ -132,11 +129,6 @@
                 {
                     public const string InvalidSignIn = "Seus dados estão incorretos. Verifique se digitou corretamente seu e-mail e preste atenção nas letras maiúsculas em sua senha.";
                 }
-
-                public struct User
-                {
-                    public const string Unauthorized = "Ops! Parece que você se perdeu. Por favor, entre em sua conta e tente novamente!";
-                }
             }
 
             public struct Aws
@@ -147,5 +139,14 @@
             }
         }
         #endregion
+
+        public struct S3
+        {
+            public const string BucketName = "pontoaponto";
+            public const string ProfilePicturesDir = "profile-pictures";
+            public const string DocumentPicturesDir = "document-pictures";
+            public const string DriverDir = "/drivers";
+            public const string UserDir = "/users";
+        }
     }
 }

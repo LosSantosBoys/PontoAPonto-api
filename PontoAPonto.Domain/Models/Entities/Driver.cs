@@ -2,13 +2,13 @@
 
 namespace PontoAPonto.Domain.Models.Entities
 {
-    public class Driver : User
+    public class Driver : UserBase
     {
         public CarInfo? CarInfo { get; private set; }
         public bool Approved { get; private set; }
         public DateTime? ApprovedAt { get; private set; }
 
-        public static new Driver CreateUser(string name, string email, string phone, byte[] passwordHash, byte[] passwordSalt, string cpf, DateTime birthday)
+        public static Driver CreateDriver(string name, string email, string phone, byte[] passwordHash, byte[] passwordSalt, string cpf, DateTime birthday)
         {
             return new Driver
             {
