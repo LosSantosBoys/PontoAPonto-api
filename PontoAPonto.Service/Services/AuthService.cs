@@ -40,7 +40,7 @@ namespace PontoAPonto.Service.Services
             return Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
         }
 
-        public string GenerateJwtToken()
+        public string GenerateJwtToken(string email, string role)
         {
             var handler = new JwtSecurityTokenHandler();
 
@@ -54,7 +54,8 @@ namespace PontoAPonto.Service.Services
                         SecurityAlgorithms.HmacSha256);
 
             var claim = new ClaimsIdentity();
-            claim.AddClaim(new Claim(ClaimTypes.Role, "USER"));
+            claim.AddClaim(new Claim(ClaimTypes.Role, role));
+            claim.AddClaim(new Claim(ClaimTypes.Email, email));
 
             var descriptor = new SecurityTokenDescriptor
             {

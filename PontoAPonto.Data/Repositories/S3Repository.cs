@@ -12,14 +12,18 @@ namespace PontoAPonto.Data.Repositories
     {
         private static readonly RegionEndpoint bucketRegion = RegionEndpoint.USEast1;
 
-        public async Task<CustomActionResult> UploadFileAsync(string bucketName, string filePath, string keyName)
+        public async Task<CustomActionResult> UploadFileAsync(string bucketName, string base64, string path)
         {
             try
             {
+                var bytes = Convert.FromBase64String(base64);
+
+                using var memoryStream = new MemoryStream(bytes);
+
                 var s3Client = new AmazonS3Client(bucketRegion);
                 var fileTransferUtility = new TransferUtility(s3Client);
 
-                await fileTransferUtility.UploadAsync(filePath, bucketName, keyName);
+                await fileTransferUtility.UploadAsync(memoryStream, bucketName, path);
 
                 return new CustomActionResult(HttpStatusCode.OK);
             }

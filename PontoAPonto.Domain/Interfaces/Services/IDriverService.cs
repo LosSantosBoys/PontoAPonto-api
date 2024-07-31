@@ -9,5 +9,6 @@ namespace PontoAPonto.Domain.Interfaces.Services
         Task<CustomActionResult> DeleteDriverByEmailAsync(string email);
         Task<CustomActionResult<Driver>> GetDriverByEmailAsync(string email);
         Task<CustomActionResult> UpdateDriverAsync(Driver driver);
+        Task<CustomActionResult> CaptureProfilePicture(string email, string imageBase64);
     }
 }

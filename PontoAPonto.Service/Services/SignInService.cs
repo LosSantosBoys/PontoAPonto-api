@@ -36,7 +36,7 @@ namespace PontoAPonto.Service.Services
                 return SignInError.SignInDoesNotMatch();
             }
 
-            var token = _authService.GenerateJwtToken();
+            var token = _authService.GenerateJwtToken(userResult.Value.Email, "USER");
 
             var responseData = new SignInResponse { TokenType = "Bearer", Token = token, IsFirstAccess = userResult.Value.IsFirstAccess };
 
@@ -65,7 +65,7 @@ namespace PontoAPonto.Service.Services
                 return SignInError.SignInDoesNotMatch();
             }
 
-            var token = _authService.GenerateJwtToken();
+            var token = _authService.GenerateJwtToken(driverResult.Value.Email, "DRIVER");
 
             var responseData = new SignInResponse { TokenType = "Bearer", Token = token, IsFirstAccess = driverResult.Value.IsFirstAccess };
 
