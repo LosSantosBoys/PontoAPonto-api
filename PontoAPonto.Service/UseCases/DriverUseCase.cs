@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PontoAPonto.Domain.Dtos.Requests.Drivers;
+using PontoAPonto.Domain.Dtos.Responses.Driver;
 using PontoAPonto.Domain.Errors.Business;
 using PontoAPonto.Domain.Interfaces.Repositories;
 using PontoAPonto.Domain.Interfaces.Services;
@@ -24,7 +25,7 @@ namespace PontoAPonto.Service.UseCases
                 return DriverError.Unauthorized();
             }
 
-            return await _driverService.CaptureProfilePictureAsync(email, request.ImageBase64);
+            return await _driverService.CaptureFaceValidationPictureAsync(email, request.ImageBase64);
         }
 
         public async Task<CustomActionResult> CaptureDocumentPictureAsync(CapturePictureRequest request, string? email)
@@ -45,6 +46,26 @@ namespace PontoAPonto.Service.UseCases
             }
 
             return await _driverService.InsertCarInfoAsync(request, email);
+        }
+
+        public async Task<CustomActionResult<DriverProfileResponse>> GetDriverProfileAsync(string? email)
+        {
+            if (string.IsNullOrEmpty(email))
+            {
+                return DriverError.Unauthorized();
+            }
+
+            return await _driverService.GetDriverProfileAsync(email);
+        }
+
+        public async Task<CustomActionResult> ChangeProfileAsync(ChangeProfileRequest request, string? email)
+        {
+            if (string.IsNullOrEmpty(email))
+            {
+                return DriverError.Unauthorized();
+            }
+
+            return await _driverService.ChangeProfileAsync(request, email);
         }
     }
 }

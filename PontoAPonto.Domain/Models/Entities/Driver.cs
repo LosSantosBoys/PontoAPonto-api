@@ -1,4 +1,5 @@
 ﻿using PontoAPonto.Domain.Enums;
+using System;
 
 namespace PontoAPonto.Domain.Models.Entities
 {
@@ -8,6 +9,8 @@ namespace PontoAPonto.Domain.Models.Entities
         public CarInfo? CarInfo { get; private set; }
         public bool Approved { get; private set; }
         public DateTime? ApprovedAt { get; private set; }
+        public string? UrlProfilePicute { get; protected set; }
+        public Location? Location { get; private set; }
 
         public static Driver CreateDriver(string name, string email, string phone, byte[] passwordHash, byte[] passwordSalt, string cpf, DateTime birthday)
         {
@@ -42,7 +45,7 @@ namespace PontoAPonto.Domain.Models.Entities
 
         public void CaptureFacePicture()
         {
-            Status = DriverStatus.WAITING_DOCUMENT_CAPTURE;
+            Status = DriverStatus.WAITING_FACE_CAPTURE;
         }
 
         public void CaptureDocumentPicture()
@@ -63,6 +66,33 @@ namespace PontoAPonto.Domain.Models.Entities
             Status = DriverStatus.APPROVED;
 
             return true;
+        }
+
+        public void UpdateProfilePicture(string url)
+        {
+            UrlProfilePicute = url;
+        }
+
+        public void UpdateCarInfo(CarInfo carInfo)
+        {
+            if (CarInfo == null)
+            {
+                CarInfo = new CarInfo(carInfo.Model, carInfo.Year, carInfo.Plate, carInfo.Color);
+                return;
+            }
+
+            CarInfo.UpdateCarInfo(carInfo.Model, carInfo.Year, carInfo.Plate, carInfo.Color);
+        }
+
+        public void UpdateLocation(Location location)
+        {
+            if (Location == null)
+            {
+                Location = new Location(location.Country, location.State, location.City);
+                return;
+            }
+            
+            Location.UpdateLocation(Location.Country, location.State, location.City);
         }
     }
 }

@@ -1,7 +1,12 @@
-﻿using PontoAPonto.Domain.Interfaces.Repositories;
+﻿using AutoMapper;
+using PontoAPonto.Domain.Dtos.Requests.Drivers;
+using PontoAPonto.Domain.Dtos.Responses.Driver;
+using PontoAPonto.Domain.Interfaces.Repositories;
 using PontoAPonto.Domain.Interfaces.Services;
 using PontoAPonto.Domain.Models;
+using PontoAPonto.Domain.Models.Configs;
 using PontoAPonto.Domain.Models.Entities;
+using System.Text;
 using static PontoAPonto.Domain.Constant.Constants;
 
 namespace PontoAPonto.Service.Services
@@ -10,11 +15,15 @@ namespace PontoAPonto.Service.Services
     {
         private readonly IDriverRepository _driverRepository;
         private readonly IS3Repository _s3Repository;
+        private readonly IMapper _mapper;
+        private readonly S3Config _s3Config;
 
-        public DriverService(IDriverRepository driverRepository, IS3Repository s3Repository)
+        public DriverService(IDriverRepository driverRepository, IS3Repository s3Repository, IMapper mapper, S3Config s3Config)
         {
             _driverRepository = driverRepository;
             _s3Repository = s3Repository;
+            _mapper = mapper;
+            _s3Config = s3Config;
         }
 
         public async Task<CustomActionResult> AddDriverAsync(Driver driver)
@@ -38,7 +47,7 @@ namespace PontoAPonto.Service.Services
             return await _driverRepository.UpdateDriverAsync(driver);
         }
 
-        public async Task<CustomActionResult> CaptureProfilePictureAsync(string email, string imageBase64)
+        public async Task<CustomActionResult> CaptureFaceValidationPictureAsync(string email, string imageBase64)
         {
             var driver = await GetDriverByEmailAsync(email);
 
@@ -47,8 +56,8 @@ namespace PontoAPonto.Service.Services
                 return driver.Error;
             }
 
-            var path = $"{S3.ProfilePicturesDir}{S3.DriverDir}/{driver.Value.Id.ToString()}.png";
-            var s3Result = await _s3Repository.UploadFileAsync(S3.BucketName, imageBase64, path);
+            var path = $"{_s3Config.FaceValidationPicturesDir}{_s3Config.DriversDir}/{driver.Value.Id.ToString()}.png";
+            var s3Result = await _s3Repository.UploadFileAsync(_s3Config.BucketName, imageBase64, path);
 
             if (s3Result.Success)
             {
@@ -76,8 +85,8 @@ namespace PontoAPonto.Service.Services
                 return driver.Error;
             }
 
-            var path = $"{S3.DocumentPicturesDir}{S3.DriverDir}/{driver.Value.Id.ToString()}.png";
-            var s3Result = await _s3Repository.UploadFileAsync(S3.BucketName, imageBase64, path);
+            var path = $"{_s3Config.DocumentPicturesDir}{_s3Config.DriversDir}/{driver.Value.Id.ToString()}.png";
+            var s3Result = await _s3Repository.UploadFileAsync(_s3Config.BucketName, imageBase64, path);
 
             if (s3Result.Success)
             {
@@ -115,6 +124,85 @@ namespace PontoAPonto.Service.Services
             }
 
             return CustomActionResult.NoContent();
+        }
+
+        public async Task<CustomActionResult<DriverProfileResponse>> GetDriverProfileAsync(string email)
+        {
+            var driverResult = await GetDriverByEmailAsync(email);
+
+            if (!driverResult.Success)
+            {
+                return driverResult.Error;
+            }
+
+            throw new NotImplementedException();
+        }
+
+        public async Task<CustomActionResult> ChangeProfileAsync(ChangeProfileRequest request, string email)
+        {
+            var driverResult = await GetDriverByEmailAsync(email);
+
+            if (!driverResult.Success)
+            {
+                return driverResult.Error;
+            }
+
+            bool hasDatabaseChanges = false;
+
+            if (!string.IsNullOrWhiteSpace(request.ProfilePictureBase64))
+            {
+                hasDatabaseChanges = true;
+                var resultProfilePicture = await ChangeProfilePictureAsync(driverResult.Value.Id.ToString(), request.ProfilePictureBase64);
+
+                if (!resultProfilePicture.Success)
+                {
+                    return resultProfilePicture;
+                }
+
+                driverResult.Value.UpdateProfilePicture(resultProfilePicture.Value);
+            }
+
+            if (request.CarInfo != null) 
+            {
+                hasDatabaseChanges = true;
+                driverResult.Value.UpdateCarInfo(request.CarInfo);
+            }
+
+            if (request.Location != null)
+            {
+                hasDatabaseChanges = true;
+                driverResult.Value.UpdateLocation(request.Location);
+            }
+
+            if (hasDatabaseChanges)
+            {
+                var updateResult = await UpdateDriverAsync(driverResult.Value);
+
+                if (!updateResult.Success)
+                {
+                    return updateResult.Error;
+                }
+
+                return CustomActionResult.NoContent();
+            }
+
+            return CustomActionResult.NoContent();
+        }
+
+        private async Task<CustomActionResult<string>> ChangeProfilePictureAsync(string driverId, string base64)
+        {
+            var path = $"{_s3Config.ProfilePicturesDir}{_s3Config.DriversDir}/{driverId.ToString()}.png";
+            var s3Result = await _s3Repository.UploadPublicFileAsync(_s3Config.BucketName, base64, path);
+
+            if (!s3Result.Success)
+            {
+                return s3Result.Error;
+            }
+
+            var sb = new StringBuilder();
+            var url = sb.AppendFormat(S3.PublicProfilePictureUrl, _s3Config.BucketName, path).ToString();
+
+            return url;
         }
     }
 }

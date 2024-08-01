@@ -57,6 +57,14 @@ namespace PontoAPonto.Data.Configs
             builder.Property(x => x.Approved).IsRequired();
 
             builder.Property(x => x.ApprovedAt);
+
+            builder.Property(x => x.UrlProfilePicute);
+
+            builder.OwnsOne(u => u.Location,
+            optBuilder =>
+            {
+                optBuilder.ToTable("Drivers");
+            });
         }
     }
 }

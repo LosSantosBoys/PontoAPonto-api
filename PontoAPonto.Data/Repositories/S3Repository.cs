@@ -5,6 +5,7 @@ using PontoAPonto.Domain.Models;
 using Amazon;
 using System.Net;
 using PontoAPonto.Domain.Errors.AWS;
+using Amazon.S3.Model;
 
 namespace PontoAPonto.Data.Repositories
 {
@@ -56,6 +57,33 @@ namespace PontoAPonto.Data.Repositories
             {
                 Console.WriteLine($"S3 Error: '{e.Message}'");
                 return S3Error.GetFileFail();
+            }
+        }
+
+        public async Task<CustomActionResult> UploadPublicFileAsync(string bucketName, string base64, string path)
+        {
+            try
+            {
+                var s3Client = new AmazonS3Client(bucketRegion);
+                byte[] imageData = Convert.FromBase64String(base64);
+                using var stream = new MemoryStream(imageData);
+
+                var putRequest = new PutObjectRequest
+                {
+                    BucketName = bucketName,
+                    Key = path,
+                    InputStream = stream,
+                    ContentType = "image/png"
+                };
+
+                var response = await s3Client.PutObjectAsync(putRequest);
+
+                return new CustomActionResult();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"S3 Error: '{e.Message}'");
+                return S3Error.UploadFail();
             }
         }
     }

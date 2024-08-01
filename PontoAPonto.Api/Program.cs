@@ -1,11 +1,9 @@
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using PontoAPonto.Domain.Interfaces.Rest;
 using PontoAPonto.Data.Rest;
-using PontoAPonto.Domain.Models.Configs;
 using Microsoft.EntityFrameworkCore;
 using PontoAPonto.Data.Contexts;
 using PontoAPonto.Service.Extensions;
@@ -59,22 +57,6 @@ namespace PontoAPonto.Api
             var connectionString = configuration.GetConnectionString("DefaultConnection");
             builder.Services.AddDbContext<UserContext>(options =>
                 options.UseMySQL(connectionString));
-
-            // Configure appsettings objects
-            builder.Services.Configure<KeysConfig>(configuration.GetSection("ConnectionStrings"));
-            builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<KeysConfig>>().Value);
-
-            builder.Services.Configure<EmailConfig>(configuration.GetSection("EmailConfig"));
-            builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<EmailConfig>>().Value);
-
-            builder.Services.Configure<JwtConfig>(configuration.GetSection("Jwt"));
-            builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<JwtConfig>>().Value);
-
-            builder.Services.Configure<ApiKeys>(configuration.GetSection("ApiKeys"));
-            builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<ApiKeys>>().Value);
-
-            builder.Services.Configure<RedisConfig>(configuration.GetSection("RedisConfig"));
-            builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<RedisConfig>>().Value);
 
             // Configure JWT Authentication
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

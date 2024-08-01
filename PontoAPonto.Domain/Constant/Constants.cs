@@ -145,11 +145,7 @@
 
         public struct S3
         {
-            public const string BucketName = "pontoaponto";
-            public const string ProfilePicturesDir = "profile-pictures";
-            public const string DocumentPicturesDir = "document-pictures";
-            public const string DriverDir = "/drivers";
-            public const string UserDir = "/users";
+            public const string PublicProfilePictureUrl = "https://{0}.s3.amazonaws.com/{1}";
         }
     }
 }
