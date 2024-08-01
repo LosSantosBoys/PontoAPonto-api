@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Org.BouncyCastle.Asn1.Ocsp;
 using PontoAPonto.Domain.Dtos.Requests.Drivers;
 using PontoAPonto.Domain.Dtos.Responses.Driver;
 using PontoAPonto.Domain.Errors.Business;
@@ -66,6 +67,16 @@ namespace PontoAPonto.Service.UseCases
             }
 
             return await _driverService.ChangeProfileAsync(request, email);
+        }
+
+        public async Task<CustomActionResult> DeleteAccountAsync(string? email)
+        {
+            if (string.IsNullOrEmpty(email))
+            {
+                return DriverError.Unauthorized();
+            }
+
+            return await _driverService.DeleteDriverByEmailAsync(email);
         }
     }
 }

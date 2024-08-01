@@ -61,8 +61,8 @@ namespace PontoAPonto.Api.Controllers
             return await _userUseCase.GetUserProfileAsync(userEmail);
         }
 
-        [HttpGet("profile/me/delete")]
-        [ProducesResponseType(typeof(UserProfileResponse), StatusCodes.Status200OK)]
+        [HttpDelete("profile/me/delete")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(CustomError), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(CustomError), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(CustomError), StatusCodes.Status500InternalServerError)]

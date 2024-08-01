@@ -4,6 +4,7 @@ using PontoAPonto.Domain.Dtos.Requests.Drivers;
 using PontoAPonto.Domain.Dtos.Responses.Driver;
 using PontoAPonto.Domain.Interfaces.UseCase;
 using PontoAPonto.Domain.Models;
+using PontoAPonto.Service.UseCases;
 using System.Security.Claims;
 
 namespace PontoAPonto.Api.Controllers
@@ -77,6 +78,19 @@ namespace PontoAPonto.Api.Controllers
         {
             var email = User.FindFirst(ClaimTypes.Email)?.Value;
             return await _driverUseCase.ChangeProfileAsync(request, email);
+        }
+
+        [HttpDelete("profile/me/delete")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(CustomError), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(CustomError), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(CustomError), StatusCodes.Status500InternalServerError)]
+        [Authorize]
+        public async Task<CustomActionResult> DeleteAccount()
+        {
+            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+
+            return await _driverUseCase.DeleteAccountAsync(userEmail);
         }
     }
 }
