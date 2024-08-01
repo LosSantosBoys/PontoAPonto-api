@@ -135,7 +135,9 @@ namespace PontoAPonto.Service.Services
                 return driverResult.Error;
             }
 
-            throw new NotImplementedException();
+            var driver = _mapper.Map<DriverProfileResponse>(driverResult.Value);
+
+            return driver;
         }
 
         public async Task<CustomActionResult> ChangeProfileAsync(ChangeProfileRequest request, string email)

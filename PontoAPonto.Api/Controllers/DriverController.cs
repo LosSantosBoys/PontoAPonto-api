@@ -19,16 +19,16 @@ namespace PontoAPonto.Api.Controllers
             _driverUseCase = driverUseCase;
         }
 
-        [HttpPatch("capture/profile-picture")]
+        [HttpPatch("capture/validaton-picture")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(CustomError), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(CustomError), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(CustomError), StatusCodes.Status500InternalServerError)]
         [Authorize]
-        public async Task<CustomActionResult> CaptureProfilePicture([FromBody] CapturePictureRequest request)
+        public async Task<CustomActionResult> CaptureValidationPicture([FromBody] CapturePictureRequest request)
         {
             var email = User.FindFirst(ClaimTypes.Email)?.Value;
-            return await _driverUseCase.CaptureProfilePictureAsync(request, email);
+            return await _driverUseCase.CaptureValidationPictureAsync(request, email);
         }
 
 
@@ -56,6 +56,17 @@ namespace PontoAPonto.Api.Controllers
             return await _driverUseCase.InsertCarInfoAsync(request, email);
         }
 
+        [HttpGet("profile/me")]
+        [ProducesResponseType(typeof(DriverProfileResponse), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(CustomError), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(CustomError), StatusCodes.Status500InternalServerError)]
+        [Authorize]
+        public async Task<CustomActionResult<DriverProfileResponse>> GetProfile()
+        {
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            return await _driverUseCase.GetDriverProfileAsync(email);
+        }
+
         [HttpPatch("profile/me")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(CustomError), StatusCodes.Status400BadRequest)]
@@ -66,14 +77,6 @@ namespace PontoAPonto.Api.Controllers
         {
             var email = User.FindFirst(ClaimTypes.Email)?.Value;
             return await _driverUseCase.ChangeProfileAsync(request, email);
-        }
-
-        [HttpGet("profile/me")]
-        [Authorize]
-        public async Task<CustomActionResult<DriverProfileResponse>> GetProfile()
-        {
-            var email = User.FindFirst(ClaimTypes.Email)?.Value;
-            return await _driverUseCase.GetDriverProfileAsync(email);
         }
     }
 }

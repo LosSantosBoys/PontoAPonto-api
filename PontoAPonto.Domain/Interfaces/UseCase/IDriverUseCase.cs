@@ -6,7 +6,7 @@ namespace PontoAPonto.Domain.Interfaces.UseCase
 {
     public interface IDriverUseCase
     {
-        Task<CustomActionResult> CaptureProfilePictureAsync(CapturePictureRequest request, string? email);
+        Task<CustomActionResult> CaptureValidationPictureAsync(CapturePictureRequest request, string? email);
         Task<CustomActionResult> CaptureDocumentPictureAsync(CapturePictureRequest request, string? email);
         Task<CustomActionResult> InsertCarInfoAsync(CarInfo request, string? email);
         Task<CustomActionResult<DriverProfileResponse>> GetDriverProfileAsync(string? email);

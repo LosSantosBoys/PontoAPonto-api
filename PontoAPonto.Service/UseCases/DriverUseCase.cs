@@ -18,7 +18,7 @@ namespace PontoAPonto.Service.UseCases
             _driverService = driverService;
         }
 
-        public async Task<CustomActionResult> CaptureProfilePictureAsync([FromBody] CapturePictureRequest request, string? email)
+        public async Task<CustomActionResult> CaptureValidationPictureAsync([FromBody] CapturePictureRequest request, string? email)
         {
             if (string.IsNullOrEmpty(email))
             {
