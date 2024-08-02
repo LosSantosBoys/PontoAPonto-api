@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Org.BouncyCastle.Asn1.Ocsp;
 using PontoAPonto.Domain.Dtos.Requests.Drivers;
 using PontoAPonto.Domain.Dtos.Responses.Driver;
 using PontoAPonto.Domain.Errors.Business;
@@ -39,14 +38,14 @@ namespace PontoAPonto.Service.UseCases
             return await _driverService.CaptureDocumentPictureAsync(email, request.ImageBase64);
         }
 
-        public async Task<CustomActionResult> InsertCarInfoAsync(CarInfo request, string? email)
+        public async Task<CustomActionResult> CaptureCarLicenseAsync(CaptureCarLicenseAsync request, string? email)
         {
             if (string.IsNullOrEmpty(email))
             {
                 return DriverError.Unauthorized();
             }
 
-            return await _driverService.InsertCarInfoAsync(request, email);
+            return await _driverService.CaptureCarLicenseAsync(email, request.PdfBase64);
         }
 
         public async Task<CustomActionResult<DriverProfileResponse>> GetDriverProfileAsync(string? email)

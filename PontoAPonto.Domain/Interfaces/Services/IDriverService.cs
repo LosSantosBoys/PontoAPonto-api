@@ -13,7 +13,7 @@ namespace PontoAPonto.Domain.Interfaces.Services
         Task<CustomActionResult> UpdateDriverAsync(Driver driver);
         Task<CustomActionResult> CaptureFaceValidationPictureAsync(string email, string imageBase64);
         Task<CustomActionResult> CaptureDocumentPictureAsync(string email, string imageBase64);
-        Task<CustomActionResult> InsertCarInfoAsync(CarInfo request, string email);
+        Task<CustomActionResult> CaptureCarLicenseAsync(string email, string pdfBase64);
         Task<CustomActionResult<DriverProfileResponse>> GetDriverProfileAsync(string email);
         Task<CustomActionResult> ChangeProfileAsync(ChangeProfileRequest request, string email);
     }

@@ -105,6 +105,11 @@ namespace PontoAPonto.Service.Services
             return CustomActionResult.NoContent();
         }
 
+        public async Task<CustomActionResult> CaptureDocumentPictureAsync(string email, string imageBase64)
+        {
+            
+        }
+
         public async Task<CustomActionResult> InsertCarInfoAsync(CarInfo request, string email)
         {
             var driverResult = await GetDriverByEmailAsync(email);
@@ -162,12 +167,6 @@ namespace PontoAPonto.Service.Services
                 }
 
                 driverResult.Value.UpdateProfilePicture(resultProfilePicture.Value);
-            }
-
-            if (request.CarInfo != null) 
-            {
-                hasDatabaseChanges = true;
-                driverResult.Value.UpdateCarInfo(request.CarInfo);
             }
 
             if (request.Location != null)

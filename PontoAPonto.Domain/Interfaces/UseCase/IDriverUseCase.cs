@@ -8,7 +8,7 @@ namespace PontoAPonto.Domain.Interfaces.UseCase
     {
         Task<CustomActionResult> CaptureValidationPictureAsync(CapturePictureRequest request, string? email);
         Task<CustomActionResult> CaptureDocumentPictureAsync(CapturePictureRequest request, string? email);
-        Task<CustomActionResult> InsertCarInfoAsync(CarInfo request, string? email);
+        Task<CustomActionResult> CaptureCarLicenseAsync(CaptureCarLicenseAsync request, string? email);
         Task<CustomActionResult<DriverProfileResponse>> GetDriverProfileAsync(string? email);
         Task<CustomActionResult> ChangeProfileAsync(ChangeProfileRequest request, string? email);
         Task<CustomActionResult> DeleteAccountAsync(string? email);

@@ -6,6 +6,6 @@ namespace PontoAPonto.Domain.Errors.Business
     public class DriverError
     {
         public const string Entity = "Driver";
-        public static CustomError Unauthorized() => ErrorHelper.CreateEntityNotFoundError(Entity);
+        public static CustomError Unauthorized() => ErrorHelper.CreateUnauthorizedError(Entity);
     }
 }

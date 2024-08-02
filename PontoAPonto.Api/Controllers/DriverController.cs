@@ -4,7 +4,6 @@ using PontoAPonto.Domain.Dtos.Requests.Drivers;
 using PontoAPonto.Domain.Dtos.Responses.Driver;
 using PontoAPonto.Domain.Interfaces.UseCase;
 using PontoAPonto.Domain.Models;
-using PontoAPonto.Service.UseCases;
 using System.Security.Claims;
 
 namespace PontoAPonto.Api.Controllers
@@ -32,7 +31,6 @@ namespace PontoAPonto.Api.Controllers
             return await _driverUseCase.CaptureValidationPictureAsync(request, email);
         }
 
-
         [HttpPatch("capture/document-picture")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(CustomError), StatusCodes.Status400BadRequest)]
@@ -43,18 +41,18 @@ namespace PontoAPonto.Api.Controllers
         {
             var email = User.FindFirst(ClaimTypes.Email)?.Value;
             return await _driverUseCase.CaptureDocumentPictureAsync(request, email);
-        }
+        },
 
-        [HttpPatch("car-info")]
+        [HttpPatch("capture/car-license")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(CustomError), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(CustomError), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(CustomError), StatusCodes.Status500InternalServerError)]
         [Authorize]
-        public async Task<CustomActionResult> InsertCarInfo([FromBody] CarInfo request)
+        public async Task<CustomActionResult> CaptureCarLicense([FromBody] CaptureCarLicenseAsync request)
         {
             var email = User.FindFirst(ClaimTypes.Email)?.Value;
-            return await _driverUseCase.InsertCarInfoAsync(request, email);
+            return await _driverUseCase.CaptureCarLicenseAsync(request, email);
         }
 
         [HttpGet("profile/me")]

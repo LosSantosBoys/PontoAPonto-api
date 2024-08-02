@@ -6,6 +6,7 @@
         public string ProfilePicturesDir { get; set; }
         public string FaceValidationPicturesDir { get; set; }
         public string DocumentPicturesDir { get; set; }
+        public string CarLicenseDir { get; set; }
         public string DriversDir { get; set; }
         public string UsersDir { get; set; }
     }
