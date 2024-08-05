@@ -41,7 +41,7 @@ namespace PontoAPonto.Api.Controllers
         {
             var email = User.FindFirst(ClaimTypes.Email)?.Value;
             return await _driverUseCase.CaptureDocumentPictureAsync(request, email);
-        },
+        }
 
         [HttpPatch("capture/car-license")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

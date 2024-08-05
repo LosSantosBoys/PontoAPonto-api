@@ -55,8 +55,16 @@ namespace PontoAPonto.Domain.Models.Entities
 
         public void SetCarInfo(CarInfo carInfo)
         {
-            CarInfo = new CarInfo(carInfo.Model, carInfo.Year, carInfo.Plate, carInfo.Color);
-            Status = DriverStatus.WAITING_MANUAL_APPROVAL;
+            if (carInfo != null)
+            {
+                Status = DriverStatus.WAITING_CAR_CHANGE_ANALYSIS;
+            }
+            else
+            {
+                Status = DriverStatus.WAITING_MANUAL_APPROVAL;
+            }
+
+            CarInfo = carInfo;
         }
 
         public bool AproveDriver()
@@ -71,17 +79,6 @@ namespace PontoAPonto.Domain.Models.Entities
         public void UpdateProfilePicture(string url)
         {
             UrlProfilePicute = url;
-        }
-
-        public void UpdateCarInfo(CarInfo carInfo)
-        {
-            if (CarInfo == null)
-            {
-                CarInfo = new CarInfo(carInfo.Model, carInfo.Year, carInfo.Plate, carInfo.Color);
-                return;
-            }
-
-            CarInfo.UpdateCarInfo(carInfo.Model, carInfo.Year, carInfo.Plate, carInfo.Color);
         }
 
         public void UpdateLocation(Location location)

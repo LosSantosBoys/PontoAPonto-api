@@ -11,8 +11,8 @@ using PontoAPonto.Data.Contexts;
 namespace PontoAPonto.Data.Migrations
 {
     [DbContext(typeof(UserContext))]
-    [Migration("20240731190402_RefactorStatus")]
-    partial class RefactorStatus
+    [Migration("20240802191838_InitialMigrationAfterWipe")]
+    partial class InitialMigrationAfterWipe
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -85,6 +85,9 @@ namespace PontoAPonto.Data.Migrations
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<string>("UrlProfilePicute")
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
@@ -179,7 +182,23 @@ namespace PontoAPonto.Data.Migrations
                             b1.Property<Guid>("DriverId")
                                 .HasColumnType("char(36)");
 
+                            b1.Property<string>("Brand")
+                                .IsRequired()
+                                .HasColumnType("longtext");
+
+                            b1.Property<string>("Category")
+                                .IsRequired()
+                                .HasColumnType("longtext");
+
                             b1.Property<string>("Color")
+                                .IsRequired()
+                                .HasColumnType("longtext");
+
+                            b1.Property<string>("FabricationYear")
+                                .IsRequired()
+                                .HasColumnType("longtext");
+
+                            b1.Property<string>("Location")
                                 .IsRequired()
                                 .HasColumnType("longtext");
 
@@ -187,11 +206,27 @@ namespace PontoAPonto.Data.Migrations
                                 .IsRequired()
                                 .HasColumnType("longtext");
 
+                            b1.Property<string>("ModelYear")
+                                .IsRequired()
+                                .HasColumnType("longtext");
+
+                            b1.Property<string>("OwnerCpfCnpj")
+                                .IsRequired()
+                                .HasColumnType("longtext");
+
                             b1.Property<string>("Plate")
                                 .IsRequired()
                                 .HasColumnType("longtext");
 
-                            b1.Property<string>("Year")
+                            b1.Property<string>("Renavam")
+                                .IsRequired()
+                                .HasColumnType("longtext");
+
+                            b1.Property<string>("Type")
+                                .IsRequired()
+                                .HasColumnType("longtext");
+
+                            b1.Property<string>("Version")
                                 .IsRequired()
                                 .HasColumnType("longtext");
 
@@ -228,7 +263,34 @@ namespace PontoAPonto.Data.Migrations
                                 .HasForeignKey("DriverId");
                         });
 
+                    b.OwnsOne("PontoAPonto.Domain.Models.Location", "Location", b1 =>
+                        {
+                            b1.Property<Guid>("DriverId")
+                                .HasColumnType("char(36)");
+
+                            b1.Property<string>("City")
+                                .IsRequired()
+                                .HasColumnType("longtext");
+
+                            b1.Property<string>("Country")
+                                .IsRequired()
+                                .HasColumnType("longtext");
+
+                            b1.Property<string>("State")
+                                .IsRequired()
+                                .HasColumnType("longtext");
+
+                            b1.HasKey("DriverId");
+
+                            b1.ToTable("Drivers", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("DriverId");
+                        });
+
                     b.Navigation("CarInfo");
+
+                    b.Navigation("Location");
 
                     b.Navigation("Otp")
                         .IsRequired();

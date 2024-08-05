@@ -179,7 +179,23 @@ namespace PontoAPonto.Data.Migrations
                             b1.Property<Guid>("DriverId")
                                 .HasColumnType("char(36)");
 
+                            b1.Property<string>("Brand")
+                                .IsRequired()
+                                .HasColumnType("longtext");
+
+                            b1.Property<string>("Category")
+                                .IsRequired()
+                                .HasColumnType("longtext");
+
                             b1.Property<string>("Color")
+                                .IsRequired()
+                                .HasColumnType("longtext");
+
+                            b1.Property<string>("FabricationYear")
+                                .IsRequired()
+                                .HasColumnType("longtext");
+
+                            b1.Property<string>("Location")
                                 .IsRequired()
                                 .HasColumnType("longtext");
 
@@ -187,11 +203,27 @@ namespace PontoAPonto.Data.Migrations
                                 .IsRequired()
                                 .HasColumnType("longtext");
 
+                            b1.Property<string>("ModelYear")
+                                .IsRequired()
+                                .HasColumnType("longtext");
+
+                            b1.Property<string>("OwnerCpfCnpj")
+                                .IsRequired()
+                                .HasColumnType("longtext");
+
                             b1.Property<string>("Plate")
                                 .IsRequired()
                                 .HasColumnType("longtext");
 
-                            b1.Property<string>("Year")
+                            b1.Property<string>("Renavam")
+                                .IsRequired()
+                                .HasColumnType("longtext");
+
+                            b1.Property<string>("Type")
+                                .IsRequired()
+                                .HasColumnType("longtext");
+
+                            b1.Property<string>("Version")
                                 .IsRequired()
                                 .HasColumnType("longtext");
 

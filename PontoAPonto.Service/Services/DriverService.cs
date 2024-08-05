@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using PontoAPonto.Domain.Dtos.Requests.Drivers;
 using PontoAPonto.Domain.Dtos.Responses.Driver;
+using PontoAPonto.Domain.Helpers;
 using PontoAPonto.Domain.Interfaces.Repositories;
 using PontoAPonto.Domain.Interfaces.Services;
 using PontoAPonto.Domain.Models;
@@ -105,12 +106,7 @@ namespace PontoAPonto.Service.Services
             return CustomActionResult.NoContent();
         }
 
-        public async Task<CustomActionResult> CaptureDocumentPictureAsync(string email, string imageBase64)
-        {
-            
-        }
-
-        public async Task<CustomActionResult> InsertCarInfoAsync(CarInfo request, string email)
+        public async Task<CustomActionResult> CaptureCarLicenseAsync(string email, string pdfBase64)
         {
             var driverResult = await GetDriverByEmailAsync(email);
 
@@ -119,7 +115,19 @@ namespace PontoAPonto.Service.Services
                 return driverResult.Error;
             }
 
-            driverResult.Value.SetCarInfo(request);
+            var path = $"{_s3Config.CarLicenseDir}{_s3Config.DriversDir}/{driverResult.Value.Id.ToString()}.pdf";
+
+            var s3Result = await _s3Repository.UploadFileAsync(_s3Config.BucketName, pdfBase64, path);
+
+            if (!s3Result.Success)
+            {
+                return s3Result.Error;
+            }
+
+            var pdfHelper = new PdfHelper();
+            var carInfo = pdfHelper.ExtractCrlvData(path);
+
+            driverResult.Value.SetCarInfo(carInfo);
 
             var updateResult = await UpdateDriverAsync(driverResult.Value);
 

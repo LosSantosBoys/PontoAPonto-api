@@ -7,9 +7,10 @@
         SIGNIN_AVAILABLE = 2,
         WAITING_FACE_CAPTURE = 3,
         WAITING_DOCUMENT_CAPTURE = 4,
-        WAITING_CAR_INFO = 5,
+        WAITING_CAR_LICENSE = 5,
         WAITING_MANUAL_APPROVAL = 6,
         APPROVED = 7,
-        REPROVED = 8
+        REPROVED = 8,
+        WAITING_CAR_CHANGE_ANALYSIS = 9
     }
 }
