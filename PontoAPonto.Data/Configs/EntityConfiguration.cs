@@ -1,6 +1,6 @@
-﻿using PontoAPonto.Domain.Models.Entities;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore;
+using PontoAPonto.Domain.Models.Entities;
 
 namespace PontoAPonto.Data.Configs
 {

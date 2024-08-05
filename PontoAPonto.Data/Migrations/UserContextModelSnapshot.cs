@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PontoAPonto.Data.Contexts;
 
 #nullable disable
@@ -16,75 +17,82 @@ namespace PontoAPonto.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.5")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("ProductVersion", "8.0.4")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("PontoAPonto.Domain.Models.Entities.Driver", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<bool>("Approved")
-                        .HasColumnType("tinyint(1)");
+                        .HasMaxLength(5)
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("ApprovedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime?>("Birthday")
                         .IsRequired()
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Cpf")
                         .HasMaxLength(11)
-                        .HasColumnType("varchar(11)");
+                        .HasColumnType("character varying(11)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("character varying(255)");
 
                     b.Property<bool>("IsFirstAccess")
-                        .HasColumnType("tinyint(1)");
+                        .HasMaxLength(5)
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("character varying(255)");
 
                     b.Property<byte[]>("PasswordHash")
                         .IsRequired()
-                        .HasColumnType("longblob");
+                        .HasColumnType("bytea");
 
                     b.Property<string>("PasswordResetToken")
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<byte[]>("PasswordSalt")
                         .IsRequired()
-                        .HasColumnType("longblob");
+                        .HasColumnType("bytea");
 
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasMaxLength(13)
-                        .HasColumnType("varchar(13)");
+                        .HasColumnType("character varying(13)");
 
                     b.Property<double>("Reputation")
-                        .HasColumnType("double");
+                        .HasMaxLength(5)
+                        .HasColumnType("double precision");
 
                     b.Property<DateTime?>("ResetTokenExpiracy")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("Status")
-                        .HasColumnType("int");
+                        .HasMaxLength(3)
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("UrlProfilePicute")
-                        .HasColumnType("longtext");
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.HasKey("Id");
 
@@ -104,59 +112,62 @@ namespace PontoAPonto.Data.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime?>("Birthday")
                         .IsRequired()
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Cpf")
                         .HasMaxLength(11)
-                        .HasColumnType("varchar(11)");
+                        .HasColumnType("character varying(11)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("character varying(255)");
 
                     b.Property<bool>("IsFirstAccess")
-                        .HasColumnType("tinyint(1)");
+                        .HasMaxLength(5)
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("character varying(255)");
 
                     b.Property<byte[]>("PasswordHash")
                         .IsRequired()
-                        .HasColumnType("longblob");
+                        .HasColumnType("bytea");
 
                     b.Property<string>("PasswordResetToken")
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<byte[]>("PasswordSalt")
                         .IsRequired()
-                        .HasColumnType("longblob");
+                        .HasColumnType("bytea");
 
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasMaxLength(13)
-                        .HasColumnType("varchar(13)");
+                        .HasColumnType("character varying(13)");
 
                     b.Property<double>("Reputation")
-                        .HasColumnType("double");
+                        .HasMaxLength(5)
+                        .HasColumnType("double precision");
 
                     b.Property<DateTime?>("ResetTokenExpiracy")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("Status")
-                        .HasColumnType("int");
+                        .HasMaxLength(3)
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -177,59 +188,71 @@ namespace PontoAPonto.Data.Migrations
                     b.OwnsOne("PontoAPonto.Domain.Models.CarInfo", "CarInfo", b1 =>
                         {
                             b1.Property<Guid>("DriverId")
-                                .HasColumnType("char(36)");
+                                .HasColumnType("uuid");
 
                             b1.Property<string>("Brand")
                                 .IsRequired()
-                                .HasColumnType("longtext");
+                                .HasMaxLength(100)
+                                .HasColumnType("character varying(100)");
 
                             b1.Property<string>("Category")
                                 .IsRequired()
-                                .HasColumnType("longtext");
+                                .HasMaxLength(50)
+                                .HasColumnType("character varying(50)");
 
                             b1.Property<string>("Color")
                                 .IsRequired()
-                                .HasColumnType("longtext");
+                                .HasMaxLength(50)
+                                .HasColumnType("character varying(50)");
 
                             b1.Property<string>("FabricationYear")
                                 .IsRequired()
-                                .HasColumnType("longtext");
+                                .HasMaxLength(4)
+                                .HasColumnType("character varying(4)");
 
                             b1.Property<string>("Location")
                                 .IsRequired()
-                                .HasColumnType("longtext");
+                                .HasMaxLength(255)
+                                .HasColumnType("character varying(255)");
 
                             b1.Property<string>("Model")
                                 .IsRequired()
-                                .HasColumnType("longtext");
+                                .HasMaxLength(100)
+                                .HasColumnType("character varying(100)");
 
                             b1.Property<string>("ModelYear")
                                 .IsRequired()
-                                .HasColumnType("longtext");
+                                .HasMaxLength(4)
+                                .HasColumnType("character varying(4)");
 
                             b1.Property<string>("OwnerCpfCnpj")
                                 .IsRequired()
-                                .HasColumnType("longtext");
+                                .HasMaxLength(14)
+                                .HasColumnType("character varying(14)");
 
                             b1.Property<string>("Plate")
                                 .IsRequired()
-                                .HasColumnType("longtext");
+                                .HasMaxLength(7)
+                                .HasColumnType("character varying(7)");
 
                             b1.Property<string>("Renavam")
                                 .IsRequired()
-                                .HasColumnType("longtext");
+                                .HasMaxLength(11)
+                                .HasColumnType("character varying(11)");
 
                             b1.Property<string>("Type")
                                 .IsRequired()
-                                .HasColumnType("longtext");
+                                .HasMaxLength(50)
+                                .HasColumnType("character varying(50)");
 
                             b1.Property<string>("Version")
                                 .IsRequired()
-                                .HasColumnType("longtext");
+                                .HasMaxLength(100)
+                                .HasColumnType("character varying(100)");
 
                             b1.HasKey("DriverId");
 
-                            b1.ToTable("Drivers", (string)null);
+                            b1.ToTable("Drivers");
 
                             b1.WithOwner()
                                 .HasForeignKey("DriverId");
@@ -238,23 +261,26 @@ namespace PontoAPonto.Data.Migrations
                     b.OwnsOne("PontoAPonto.Domain.Models.Otp", "Otp", b1 =>
                         {
                             b1.Property<Guid>("DriverId")
-                                .HasColumnType("char(36)");
+                                .HasColumnType("uuid");
 
                             b1.Property<int>("Attempts")
-                                .HasColumnType("int");
+                                .HasMaxLength(1)
+                                .HasColumnType("integer");
 
                             b1.Property<DateTime>("Expiracy")
-                                .HasColumnType("datetime(6)");
+                                .HasColumnType("timestamp with time zone");
 
                             b1.Property<bool>("IsVerified")
-                                .HasColumnType("tinyint(1)");
+                                .HasMaxLength(5)
+                                .HasColumnType("boolean");
 
                             b1.Property<int>("Password")
-                                .HasColumnType("int");
+                                .HasMaxLength(4)
+                                .HasColumnType("integer");
 
                             b1.HasKey("DriverId");
 
-                            b1.ToTable("Drivers", (string)null);
+                            b1.ToTable("Drivers");
 
                             b1.WithOwner()
                                 .HasForeignKey("DriverId");
@@ -263,23 +289,26 @@ namespace PontoAPonto.Data.Migrations
                     b.OwnsOne("PontoAPonto.Domain.Models.Location", "Location", b1 =>
                         {
                             b1.Property<Guid>("DriverId")
-                                .HasColumnType("char(36)");
+                                .HasColumnType("uuid");
 
                             b1.Property<string>("City")
                                 .IsRequired()
-                                .HasColumnType("longtext");
+                                .HasMaxLength(255)
+                                .HasColumnType("character varying(255)");
 
                             b1.Property<string>("Country")
                                 .IsRequired()
-                                .HasColumnType("longtext");
+                                .HasMaxLength(255)
+                                .HasColumnType("character varying(255)");
 
                             b1.Property<string>("State")
                                 .IsRequired()
-                                .HasColumnType("longtext");
+                                .HasMaxLength(255)
+                                .HasColumnType("character varying(255)");
 
                             b1.HasKey("DriverId");
 
-                            b1.ToTable("Drivers", (string)null);
+                            b1.ToTable("Drivers");
 
                             b1.WithOwner()
                                 .HasForeignKey("DriverId");
@@ -298,23 +327,26 @@ namespace PontoAPonto.Data.Migrations
                     b.OwnsOne("PontoAPonto.Domain.Models.Otp", "Otp", b1 =>
                         {
                             b1.Property<Guid>("UserId")
-                                .HasColumnType("char(36)");
+                                .HasColumnType("uuid");
 
                             b1.Property<int>("Attempts")
-                                .HasColumnType("int");
+                                .HasMaxLength(1)
+                                .HasColumnType("integer");
 
                             b1.Property<DateTime>("Expiracy")
-                                .HasColumnType("datetime(6)");
+                                .HasColumnType("timestamp with time zone");
 
                             b1.Property<bool>("IsVerified")
-                                .HasColumnType("tinyint(1)");
+                                .HasMaxLength(5)
+                                .HasColumnType("boolean");
 
                             b1.Property<int>("Password")
-                                .HasColumnType("int");
+                                .HasMaxLength(4)
+                                .HasColumnType("integer");
 
                             b1.HasKey("UserId");
 
-                            b1.ToTable("Users", (string)null);
+                            b1.ToTable("Users");
 
                             b1.WithOwner()
                                 .HasForeignKey("UserId");

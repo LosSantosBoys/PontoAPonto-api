@@ -54,9 +54,8 @@ namespace PontoAPonto.Api
             var configuration = builder.Configuration;
 
             // Add database context
-            var connectionString = configuration.GetConnectionString("DefaultConnection");
             builder.Services.AddDbContext<UserContext>(options =>
-                options.UseMySQL(connectionString));
+                options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             // Configure JWT Authentication
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

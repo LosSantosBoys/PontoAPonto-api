@@ -17,14 +17,6 @@ namespace PontoAPonto.Data.Contexts
             _keyConfig = keyConfig;
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
-        {
-            if (!options.IsConfigured)
-            {
-                options.UseMySQL(_keyConfig.DefaultConnection);
-            }
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             var typesToRegister = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes())
