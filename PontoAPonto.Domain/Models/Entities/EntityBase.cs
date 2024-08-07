@@ -7,8 +7,8 @@ namespace PontoAPonto.Domain.Models.Entities
         protected EntityBase()
         {
             Id = Guid.NewGuid();
-            CreatedAt = DateTime.Now;
-            UpdatedAt = DateTime.Now;
+            CreatedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow;
         }
 
         public Guid Id { get; private set; }

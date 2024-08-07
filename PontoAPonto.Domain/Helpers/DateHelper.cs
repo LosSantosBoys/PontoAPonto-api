@@ -6,6 +6,7 @@
         {
             if (DateTime.TryParseExact(date, "dd-MM-yyyy", null, System.Globalization.DateTimeStyles.None, out DateTime dateTime))
             {
+                dateTime = DateTime.SpecifyKind(dateTime, DateTimeKind.Utc);
                 return (true, dateTime);
             }
 

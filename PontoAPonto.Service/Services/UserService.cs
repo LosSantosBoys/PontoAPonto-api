@@ -57,7 +57,7 @@ namespace PontoAPonto.Service.Services
                 return false;
 
             user.Value.PasswordResetToken = _authService.CreateRandomToken();
-            user.Value.ResetTokenExpiracy = DateTime.Now.AddMinutes(30);
+            user.Value.ResetTokenExpiracy = DateTime.UtcNow.AddMinutes(30);
 
             var success = await _userRepository.UpdateUserAsync(user);
 
@@ -78,7 +78,7 @@ namespace PontoAPonto.Service.Services
 
             var user = await _userRepository.GetUserByTokenAsync(token);
 
-            if (DateTime.Now > user.ResetTokenExpiracy)
+            if (DateTime.UtcNow > user.ResetTokenExpiracy)
                 return false;
 
             _authService.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);

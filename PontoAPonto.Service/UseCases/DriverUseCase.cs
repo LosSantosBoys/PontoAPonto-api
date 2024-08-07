@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using PontoAPonto.Domain.Dtos.Requests.Drivers;
 using PontoAPonto.Domain.Dtos.Responses.Driver;
 using PontoAPonto.Domain.Errors.Business;
@@ -38,14 +39,14 @@ namespace PontoAPonto.Service.UseCases
             return await _driverService.CaptureDocumentPictureAsync(email, request.ImageBase64);
         }
 
-        public async Task<CustomActionResult> CaptureCarLicenseAsync(CaptureCarLicenseAsync request, string? email)
+        public async Task<CustomActionResult> CaptureCarLicenseAsync(IFormFile pdfFile, string? email)
         {
             if (string.IsNullOrEmpty(email))
             {
                 return DriverError.Unauthorized();
             }
 
-            return await _driverService.CaptureCarLicenseAsync(email, request.PdfBase64);
+            return await _driverService.CaptureCarLicenseAsync(email, pdfFile);
         }
 
         public async Task<CustomActionResult<DriverProfileResponse>> GetDriverProfileAsync(string? email)

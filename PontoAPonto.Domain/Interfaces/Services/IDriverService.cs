@@ -1,4 +1,5 @@
-﻿using PontoAPonto.Domain.Dtos.Requests.Drivers;
+﻿using Microsoft.AspNetCore.Http;
+using PontoAPonto.Domain.Dtos.Requests.Drivers;
 using PontoAPonto.Domain.Dtos.Responses.Driver;
 using PontoAPonto.Domain.Models;
 using PontoAPonto.Domain.Models.Entities;
@@ -13,7 +14,7 @@ namespace PontoAPonto.Domain.Interfaces.Services
         Task<CustomActionResult> UpdateDriverAsync(Driver driver);
         Task<CustomActionResult> CaptureFaceValidationPictureAsync(string email, string imageBase64);
         Task<CustomActionResult> CaptureDocumentPictureAsync(string email, string imageBase64);
-        Task<CustomActionResult> CaptureCarLicenseAsync(string email, string pdfBase64);
+        Task<CustomActionResult> CaptureCarLicenseAsync(string email, IFormFile pdfFile);
         Task<CustomActionResult<DriverProfileResponse>> GetDriverProfileAsync(string email);
         Task<CustomActionResult> ChangeProfileAsync(ChangeProfileRequest request, string email);
     }

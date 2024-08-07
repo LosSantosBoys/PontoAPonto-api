@@ -1,4 +1,5 @@
-﻿using PontoAPonto.Domain.Models;
+﻿using Microsoft.AspNetCore.Http;
+using PontoAPonto.Domain.Models;
 using System.Text.RegularExpressions;
 using UglyToad.PdfPig;
 
@@ -6,11 +7,12 @@ namespace PontoAPonto.Domain.Helpers
 {
     public class PdfHelper
     {
-        public CarInfo ExtractCrlvData(string pdfPath)
+        public CarInfo ExtractCrlvData(IFormFile pdfFile)
         {
             var data = new CarInfo();
 
-            using (var document = PdfDocument.Open(pdfPath))
+            using (var stream = pdfFile.OpenReadStream())
+            using (var document = PdfDocument.Open(stream))
             {
                 foreach (var page in document.GetPages())
                 {
@@ -49,7 +51,7 @@ namespace PontoAPonto.Domain.Helpers
                     if (brandModelVersionMatch.Success)
                     {
                         data.Brand = brandModelVersionMatch.Groups[1].Value;
-                        data.Model = "";
+                        data.Model = ""; // TODO - Think how to extract these values
                         data.Version = "";
                     }
 

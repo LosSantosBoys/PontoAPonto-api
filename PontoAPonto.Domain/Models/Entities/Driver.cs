@@ -70,7 +70,7 @@ namespace PontoAPonto.Domain.Models.Entities
         public bool AproveDriver()
         {
             Approved = true;
-            ApprovedAt = DateTime.Now;
+            ApprovedAt = DateTime.UtcNow;
             Status = DriverStatus.APPROVED;
 
             return true;

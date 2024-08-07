@@ -16,19 +16,19 @@ namespace PontoAPonto.Domain.Models.Entities
         public string Phone { get; protected set; }
         public Otp Otp { get; protected set; }
         public bool IsFirstAccess { get; set; }
-        public byte[]? PasswordHash { get; protected set; }
-        public byte[]? PasswordSalt { get; protected set; }
+        public byte[] PasswordHash { get; protected set; }
+        public byte[] PasswordSalt { get; protected set; }
         public string? PasswordResetToken { get; set; }
         public DateTime? ResetTokenExpiracy { get; set; }
         [MaxLength(11)]
         public string? Cpf { get; protected set; }
-        public DateTime? Birthday { get; protected set; }
+        public DateTime Birthday { get; protected set; }
         public double Reputation { get; protected set; }
 
         public virtual CustomActionResult ValidateOtp(int otpCode)
         {
             var result = Otp.ValidateOtp(otpCode);
-            UpdatedAt = DateTime.Now;
+            UpdatedAt = DateTime.UtcNow;
 
             return result;
         }
@@ -36,7 +36,7 @@ namespace PontoAPonto.Domain.Models.Entities
         public CustomActionResult GenerateNewOtp()
         {
             var result = Otp.GenerateNewOtp();
-            UpdatedAt = DateTime.Now;
+            UpdatedAt = DateTime.UtcNow;
 
             return result;
         }

@@ -4,6 +4,7 @@ using PontoAPonto.Domain.Dtos.Requests.Drivers;
 using PontoAPonto.Domain.Dtos.Responses.Driver;
 using PontoAPonto.Domain.Interfaces.UseCase;
 using PontoAPonto.Domain.Models;
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
 namespace PontoAPonto.Api.Controllers
@@ -49,10 +50,10 @@ namespace PontoAPonto.Api.Controllers
         [ProducesResponseType(typeof(CustomError), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(CustomError), StatusCodes.Status500InternalServerError)]
         [Authorize]
-        public async Task<CustomActionResult> CaptureCarLicense([FromBody] CaptureCarLicenseAsync request)
+        public async Task<CustomActionResult> CaptureCarLicense([Required][FromForm] IFormFile pdfFile)
         {
             var email = User.FindFirst(ClaimTypes.Email)?.Value;
-            return await _driverUseCase.CaptureCarLicenseAsync(request, email);
+            return await _driverUseCase.CaptureCarLicenseAsync(pdfFile, email);
         }
 
         [HttpGet("profile/me")]

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using PontoAPonto.Domain.Dtos.Requests.Drivers;
 using PontoAPonto.Domain.Dtos.Responses.Driver;
 using PontoAPonto.Domain.Helpers;
@@ -44,7 +45,7 @@ namespace PontoAPonto.Service.Services
 
         public async Task<CustomActionResult> UpdateDriverAsync(Driver driver)
         {
-            driver.UpdatedAt = DateTime.Now;
+            driver.UpdatedAt = DateTime.UtcNow;
             return await _driverRepository.UpdateDriverAsync(driver);
         }
 
@@ -106,7 +107,7 @@ namespace PontoAPonto.Service.Services
             return CustomActionResult.NoContent();
         }
 
-        public async Task<CustomActionResult> CaptureCarLicenseAsync(string email, string pdfBase64)
+        public async Task<CustomActionResult> CaptureCarLicenseAsync(string email, IFormFile pdfFile)
         {
             var driverResult = await GetDriverByEmailAsync(email);
 
@@ -117,7 +118,7 @@ namespace PontoAPonto.Service.Services
 
             var path = $"{_s3Config.CarLicenseDir}{_s3Config.DriversDir}/{driverResult.Value.Id.ToString()}.pdf";
 
-            var s3Result = await _s3Repository.UploadFileAsync(_s3Config.BucketName, pdfBase64, path);
+            var s3Result = await _s3Repository.UploadFileAsync(_s3Config.BucketName, pdfFile, path);
 
             if (!s3Result.Success)
             {
@@ -125,7 +126,7 @@ namespace PontoAPonto.Service.Services
             }
 
             var pdfHelper = new PdfHelper();
-            var carInfo = pdfHelper.ExtractCrlvData(path);
+            var carInfo = pdfHelper.ExtractCrlvData(pdfFile);
 
             driverResult.Value.SetCarInfo(carInfo);
 

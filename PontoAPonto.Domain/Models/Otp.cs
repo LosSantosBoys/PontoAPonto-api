@@ -7,7 +7,7 @@ namespace PontoAPonto.Domain.Models
         public Otp()
         {
             Password = new Random().Next(1000, 9999);
-            Expiracy = DateTime.Now.AddMinutes(5);
+            Expiracy = DateTime.UtcNow.AddMinutes(5);
             Attempts = 0;
             IsVerified = false;
         }
@@ -29,7 +29,7 @@ namespace PontoAPonto.Domain.Models
                 return OtpError.ExceededMaximumAttempts;
             }
 
-            if (DateTime.Now > Expiracy)
+            if (DateTime.UtcNow > Expiracy)
             {
                 Attempts++;
                 return OtpError.ExpiredOtp;
@@ -55,7 +55,7 @@ namespace PontoAPonto.Domain.Models
 
             IsVerified = false;
             Password = new Random().Next(1000, 9999);
-            Expiracy = DateTime.Now.AddMinutes(10);
+            Expiracy = DateTime.UtcNow.AddMinutes(10);
             return new CustomActionResult();
         }
     }

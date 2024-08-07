@@ -6,6 +6,7 @@ using Amazon;
 using System.Net;
 using PontoAPonto.Domain.Errors.AWS;
 using Amazon.S3.Model;
+using Microsoft.AspNetCore.Http;
 
 namespace PontoAPonto.Data.Repositories
 {
@@ -20,6 +21,29 @@ namespace PontoAPonto.Data.Repositories
                 var bytes = Convert.FromBase64String(base64);
 
                 using var memoryStream = new MemoryStream(bytes);
+
+                var s3Client = new AmazonS3Client(bucketRegion);
+                var fileTransferUtility = new TransferUtility(s3Client);
+
+                await fileTransferUtility.UploadAsync(memoryStream, bucketName, path);
+
+                return new CustomActionResult(HttpStatusCode.OK);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"S3 Error: '{e.Message}'");
+                return S3Error.UploadFail();
+            }
+        }
+
+        public async Task<CustomActionResult> UploadFileAsync(string bucketName, IFormFile file, string path)
+        {
+            try
+            {
+                using var memoryStream = new MemoryStream();
+                await file.CopyToAsync(memoryStream);
+
+                memoryStream.Position = 0;
 
                 var s3Client = new AmazonS3Client(bucketRegion);
                 var fileTransferUtility = new TransferUtility(s3Client);
